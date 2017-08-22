@@ -97,11 +97,11 @@ void createCircle()
 	);
 	circle.setPointCount(circle_sides_count);
 	circle.setFillColor(sf::Color(
-	                    rand() % 256,
-	                    rand() % 256,
-	                    rand() % 256,
-	                    rand() % 256
-	                ));
+	                        rand() % 256,
+	                        rand() % 256,
+	                        rand() % 256,
+	                        rand() % 256
+	                    ));
 
 	circle_array.push_back(circle);
 };
@@ -123,6 +123,7 @@ void RenderAndUpdate(
 	//draw the circle
 	for (int circle_array_iterator = 0; circle_array_iterator < circle_array.size(); circle_array_iterator++)
 	{
+		circle_array.at(circle_array_iterator).move((rand() % 3) - 1, (rand() % 3) - 1);
 		window->draw(circle_array.at(circle_array_iterator));
 	}
 };
