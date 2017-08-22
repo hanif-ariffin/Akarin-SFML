@@ -1,0 +1,3 @@
+#!/bin/bash
+echo "begin compiling"
+g++ -c main.cpp && g++ main.o -o build/sfml-app -lsfml-graphics -lsfml-window -lsfml-system

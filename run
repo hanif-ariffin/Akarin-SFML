@@ -1,0 +1,4 @@
+#!/bin/bash
+./build-akarin
+echo "executing program"
+build/sfml-app
