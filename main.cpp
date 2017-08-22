@@ -19,26 +19,32 @@ int main()
     /*
     Input struct
     */
-    Akarin::GameInput user_input;
+    Akarin::UserInput user_input;
+    /*
+    Reset everything to false
+    */
+    user_input.up.is_down = false;
+    user_input.down.is_down = false;
+    user_input.left.is_down = false;
+    user_input.right.is_down = false;
+    user_input.q.is_down = false;
+    user_input.w.is_down = false;
+    user_input.e.is_down = false;
+    user_input.r.is_down = false;
+    user_input.space.is_down = false;
 
+    user_input.up.was_released = false;
+    user_input.down.was_released = false;
+    user_input.left.was_released = false;
+    user_input.right.was_released = false;
+    user_input.q.was_released = false;
+    user_input.w.was_released = false;
+    user_input.e.was_released = false;
+    user_input.r.was_released = false;
+    user_input.space.was_released = false;
     // run the program as long as the window is open
     while (window.isOpen())
     {
-        /*
-        Reset
-        */
-        user_input.up.is_down = false;
-        user_input.down.is_down = false;
-        user_input.left.is_down = false;
-        user_input.right.is_down = false;
-        user_input.space.is_down = false;
-
-        user_input.up.was_released = false;
-        user_input.down.was_released = false;
-        user_input.left.was_released = false;
-        user_input.right.was_released = false;
-        user_input.space.was_released = false;
-
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
         while (window.pollEvent(event))
@@ -80,32 +86,50 @@ int main()
                 }
                 else if (event.key.code == sf::Keyboard::Left)
                 {
-                    std::cout << "left key pressed" << std::endl;
+                    //std::cout << "left key pressed" << std::endl;
+                    user_input.left.is_down = true;
                     //circle.move(-move_change_magnitude, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
-                    std::cout << "right key pressed" << std::endl;
+                    //std::cout << "right key pressed" << std::endl;
+                    user_input.right.is_down = true;
                     //circle.move(move_change_magnitude, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
-                    std::cout << "left key pressed" << std::endl;
+                    //std::cout << "left key pressed" << std::endl;
+                    user_input.down.is_down = true;
                     //circle.move(0, move_change_magnitude);
                 }
                 else if (event.key.code == sf::Keyboard::Up)
                 {
-                    std::cout << "right key pressed" << std::endl;
+                    //std::cout << "right key pressed" << std::endl;
+                    user_input.up.is_down = true;
                     //circle.move(0, -move_change_magnitude);
                 }
-                else if (event.key.code == sf::Keyboard::A)
+                else if (event.key.code == sf::Keyboard::Q)
                 {
-                    std::cout << "A key pressed" << std::endl;
+                    //std::cout << "A key pressed" << std::endl;
+                    user_input.q.is_down = true;
                     //circle.setPointCount(circle_sides_count);
                 }
-                else if (event.key.code == sf::Keyboard::B)
+                else if (event.key.code == sf::Keyboard::W)
                 {
-                    std::cout << "B key pressed" << std::endl;
+                    //std::cout << "B key pressed" << std::endl;
+                    user_input.w.is_down = true;
+                    //circle.setPointCount(circle_sides_count);
+                }
+                else if (event.key.code == sf::Keyboard::E)
+                {
+                    //std::cout << "A key pressed" << std::endl;
+                    user_input.e.is_down = true;
+                    //circle.setPointCount(circle_sides_count);
+                }
+                else if (event.key.code == sf::Keyboard::R)
+                {
+                    //std::cout << "B key pressed" << std::endl;
+                    user_input.r.is_down = true;
                     //circle.setPointCount(circle_sides_count);
                 }
                 break;
@@ -113,33 +137,57 @@ int main()
             case sf::Event::KeyReleased:
                 if (event.key.code == sf::Keyboard::Left)
                 {
-                    std::cout << "left key released" << std::endl;
+                    //std::cout << "left key pressed" << std::endl;
+                    user_input.left.is_down = false;
+                    //circle.move(-move_change_magnitude, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
-                    std::cout << "right key released" << std::endl;
-                }
-                else if (event.key.code == sf::Keyboard::Up)
-                {
-                    std::cout << "up key released" << std::endl;
+                    //std::cout << "right key pressed" << std::endl;
+                    user_input.right.is_down = false;
+                    //circle.move(move_change_magnitude, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
-                    std::cout << "down key released" << std::endl;
+                    //std::cout << "left key pressed" << std::endl;
+                    user_input.down.is_down = false;
+                    //circle.move(0, move_change_magnitude);
                 }
-                else if (event.key.code == sf::Keyboard::A)
+                else if (event.key.code == sf::Keyboard::Up)
                 {
-                    std::cout << "A key released" << std::endl;
+                    //std::cout << "right key pressed" << std::endl;
+                    user_input.up.is_down = false;
+                    //circle.move(0, -move_change_magnitude);
                 }
-                else if (event.key.code == sf::Keyboard::B)
+                else if (event.key.code == sf::Keyboard::Q)
                 {
-                    std::cout << "B key released" << std::endl;
+                    //std::cout << "A key pressed" << std::endl;
+                    user_input.q.is_down = false;
+                    //circle.setPointCount(circle_sides_count);
+                }
+                else if (event.key.code == sf::Keyboard::W)
+                {
+                    //std::cout << "B key pressed" << std::endl;
+                    user_input.w.is_down = false;
+                    //circle.setPointCount(circle_sides_count);
+                }
+                else if (event.key.code == sf::Keyboard::E)
+                {
+                    //std::cout << "A key pressed" << std::endl;
+                    user_input.e.is_down = false;
+                    //circle.setPointCount(circle_sides_count);
+                }
+                else if (event.key.code == sf::Keyboard::R)
+                {
+                    //std::cout << "B key pressed" << std::endl;
+                    user_input.r.is_down = false;
+                    //circle.setPointCount(circle_sides_count);
                 }
                 break;
             }
         }
         // clear the window with black color
-        window.clear(sf::Color(255, 200, 255, 255));
+        window.clear(sf::Color(0, 0, 0, 0));
 
         // Rendering here
         Akarin::RenderAndUpdate(&window, user_input);

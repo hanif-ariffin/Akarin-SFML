@@ -15,20 +15,22 @@ struct Key {
 	bool is_down;
 	bool was_released;
 };
-struct GameInput
+struct UserInput
 {
 	Key up;
 	Key down;
 	Key left;
 	Key right;
 	Key space;
-	Key a;
-	Key b;
+	Key q;
+	Key w;
+	Key e;
+	Key r;
 };
 
 void RenderAndUpdate(
     sf::RenderWindow *window,
-    GameInput game_input
+    UserInput user_input
 );
 }
 
