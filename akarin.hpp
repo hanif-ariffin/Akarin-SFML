@@ -28,11 +28,13 @@ struct UserInput
 	Key r;
 };
 
+void ParseUserInput(UserInput user_input);
+void createCircle();
 void RenderAndUpdate(
     sf::RenderWindow *window,
     UserInput user_input
 );
-}
+} // namespace Akarin
 
 #define AKARIN_H
 #endif

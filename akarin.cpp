@@ -3,18 +3,23 @@
 
 namespace Akarin {
 
+static bool initialized = false;
+
 static int move_change_magnitude = 1;
 
-static int height = 800;
-static int width = 600;
+static int akarin_height = 500;
+static int akarin_width = 500;
 
 static int radius = 40;
 static int circle_sides_count = 20;
+static int circle_x_origin_change = 0;
+static int circle_y_origin_change = 0;
 
 static int background_red_color = 0;
 static int background_green_color = 0;
 static int background_blue_color = 0;
 static int background_alpha_value = 0;
+
 
 /*
 Note:
@@ -32,18 +37,22 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.up.is_down)
 	{
 		std::cout << "up" << std::endl;
+		circle_y_origin_change--;
 	}
 	if (user_input.down.is_down)
 	{
 		std::cout << "down" << std::endl;
+		circle_y_origin_change++;
 	}
 	if (user_input.right.is_down)
 	{
 		std::cout << "right" << std::endl;
+		circle_x_origin_change++;
 	}
 	if (user_input.left.is_down)
 	{
 		std::cout << "left" << std::endl;
+		circle_x_origin_change--;
 	}
 	if (user_input.q.is_down)
 	{
@@ -68,15 +77,19 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.space.is_down)
 	{
 		std::cout << "space" << std::endl;
+		radius++;
+		circle_sides_count++;
 	}
 }
+
+void createCircle()
+{
+};
 
 void RenderAndUpdate(
     sf::RenderWindow *window,
     UserInput user_input
 ) {
-
-	ParseUserInput(user_input);
 	// Set background color
 	window->clear(sf::Color(
 	                  background_red_color,
@@ -84,32 +97,20 @@ void RenderAndUpdate(
 	                  background_blue_color,
 	                  background_alpha_value
 	              ));
+	ParseUserInput(user_input);
 
-	// define a 120x50 rectangle
-	sf::RectangleShape rectangle(sf::Vector2f(
-	                                 120,
-	                                 50
-	                             ));
-
-	// change the size to 100x100
-	rectangle.setSize(sf::Vector2f(
-	                      100,
-	                      100
-	                  ));
-
-	// define a circle with radius = 200
 	sf::CircleShape circle(radius);
 
-	// change the radius to 40
-	//circle.setRadius(40);
-	circle.setPosition(
-	    (height / 2 ) - (radius),
-	    (width / 2)  - (radius)
-	);
+	int circle_x_origin = (akarin_width / 2) + circle_x_origin_change - (radius);
+	int circle_y_origin = (akarin_height / 2) + circle_y_origin_change - (radius);
 
-	// change the number of sides (points) to 100
+	circle.setPosition(
+	    circle_x_origin,
+	    circle_y_origin
+	);
 	circle.setPointCount(circle_sides_count);
 
+	//draw the circle
 	window->draw(circle);
 };
 }

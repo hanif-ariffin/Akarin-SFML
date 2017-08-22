@@ -5,8 +5,8 @@
 
 int main()
 {
-    int height = 800;
-    int width = 600;
+    int height = 500;
+    int width = 500;
 
     /*
     create the window
@@ -132,6 +132,12 @@ int main()
                     user_input.r.is_down = true;
                     //circle.setPointCount(circle_sides_count);
                 }
+                else if (event.key.code == sf::Keyboard::Space)
+                {
+                    //std::cout << "B key pressed" << std::endl;
+                    user_input.space.is_down = true;
+                    //circle.setPointCount(circle_sides_count);
+                }
                 break;
 
             case sf::Event::KeyReleased:
@@ -183,11 +189,17 @@ int main()
                     user_input.r.is_down = false;
                     //circle.setPointCount(circle_sides_count);
                 }
+                else if (event.key.code == sf::Keyboard::Space)
+                {
+                    //std::cout << "B key pressed" << std::endl;
+                    user_input.space.is_down = false;
+                    //circle.setPointCount(circle_sides_count);
+                }
                 break;
             }
         }
         // clear the window with black color
-        window.clear(sf::Color(0, 0, 0, 0));
+        //window.clear(sf::Color(0, 0, 0, 0));
 
         // Rendering here
         Akarin::RenderAndUpdate(&window, user_input);
