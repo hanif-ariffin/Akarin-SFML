@@ -5,8 +5,8 @@
 
 int main()
 {
-    int height = 900;
-    int width = 1800;
+    int height = 500;
+    int width = 700;
 
     /*
     create the window
@@ -14,7 +14,7 @@ int main()
     */
     sf::RenderWindow window(sf::VideoMode(width, height), "Akarin");
     window.setVerticalSyncEnabled(true);
-    window.setFramerateLimit(60);
+    //window.setFramerateLimit(60);
 
     /*
     Input struct

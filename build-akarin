@@ -10,6 +10,7 @@ else
 fi
 g++ -c main.cpp -o obj/main.o
 g++ -c akarin.cpp -o obj/akarin.o
+g++ -c akarin_math.cpp -o obj/akarin_math.o
 if [ ! -d build ]; then
 	echo "build folder not found, creating build folder"
 	mkdir build
@@ -17,6 +18,6 @@ else
 	echo "build folder found, cleaning build folder"
 	rm -rf build/*
 fi
-g++ obj/main.o obj/akarin.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
+g++ obj/main.o obj/akarin.o obj/akarin_math.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
 echo "removing obj file"
 rm -rf obj

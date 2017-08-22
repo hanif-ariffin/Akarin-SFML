@@ -8,8 +8,8 @@ static bool initialized = false;
 
 static int move_change_magnitude = 1;
 
-static int akarin_height = 900;
-static int akarin_width = 1800;
+static int akarin_height;
+static int akarin_width;
 
 static int radius = 40;
 static int circle_sides_count = 20;
@@ -87,14 +87,17 @@ void ParseUserInput(UserInput user_input)
 
 void createCircle()
 {
+	//std::cout << "creating circle" << std::endl;
 	sf::CircleShape circle(radius);
 
 	int circle_x_origin = (rand() % akarin_width) - radius;
 	int circle_y_origin = (rand() % akarin_height) - radius;
+	
 	circle.setPosition(
 	    circle_x_origin,
 	    circle_y_origin
 	);
+	
 	circle.setPointCount(circle_sides_count);
 	circle.setFillColor(sf::Color(
 	                        rand() % 256,
@@ -110,8 +113,16 @@ void RenderAndUpdate(
     sf::RenderWindow *window,
     UserInput user_input
 ) {
+	//std::cout << rand_with_negative(rand()) << ", " << rand_with_negative_2(rand()) << std::endl;
+	//std::cout << RAND_MAX << std::endl;
+	//std::cout << window->getSize().x << ", " << window->getSize().y << std::endl;
 	//std::cout << "random:" << (rand() % akarin_height) << ", " << (rand() % akarin_width) << std::endl;
-	// Set background color
+
+	// obtain the width and height from window
+	akarin_width = window->getSize().x;
+	akarin_height = window->getSize().y;
+
+	// set the background color
 	window->clear(sf::Color(
 	                  background_red_color,
 	                  background_green_color,
@@ -140,7 +151,7 @@ void RenderAndUpdate(
 			circle_array.at(circle_array_iterator).move(5, 0);
 		}
 
-		circle_array.at(circle_array_iterator).move((rand() % 3) - 1, (rand() % 3) - 1);
+		circle_array.at(circle_array_iterator).move(rand(), rand());
 		window->draw(circle_array.at(circle_array_iterator));
 	}
 };
