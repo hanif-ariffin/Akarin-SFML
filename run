@@ -1,4 +1,5 @@
 #!/bin/bash
+rm -rf build
 ./build-akarin
 echo "executing program"
-build/sfml-app
+build/akarin

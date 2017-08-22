@@ -1,25 +1,43 @@
 #include <SFML/Graphics.hpp>
-#include "akarin.h"
 #include <iostream>
+
+#include "akarin.hpp"
 
 int main()
 {
+    int height = 800;
+    int width = 600;
+
     /*
     create the window
     you can only declare one of these
     */
-    int height = 800;
-    int width = 600;
-    Akarin::GameInput old_game_input;
-    Akarin::GameInput new_game_input;
+    sf::RenderWindow window(sf::VideoMode(height, width), "Akarin");
+    window.setVerticalSyncEnabled(true);
+    window.setFramerateLimit(60);
+
+    /*
+    Input struct
+    */
+    Akarin::GameInput user_input;
+
     // run the program as long as the window is open
     while (window.isOpen())
     {
         /*
         Reset
         */
-        old_game_input = new_game_input;
-        game_input = {false};
+        user_input.up.is_down = false;
+        user_input.down.is_down = false;
+        user_input.left.is_down = false;
+        user_input.right.is_down = false;
+        user_input.space.is_down = false;
+
+        user_input.up.was_released = false;
+        user_input.down.was_released = false;
+        user_input.left.was_released = false;
+        user_input.right.was_released = false;
+        user_input.space.was_released = false;
 
         // check all the window's events that were triggered since the last iteration of the loop
         sf::Event event;
@@ -62,33 +80,60 @@ int main()
                 }
                 else if (event.key.code == sf::Keyboard::Left)
                 {
-                    std::cout << "left key" << std::endl;
+                    std::cout << "left key pressed" << std::endl;
                     //circle.move(-move_change_magnitude, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Right)
                 {
-                    std::cout << "right key" << std::endl;
+                    std::cout << "right key pressed" << std::endl;
                     //circle.move(move_change_magnitude, 0);
                 }
                 else if (event.key.code == sf::Keyboard::Down)
                 {
-                    std::cout << "left key" << std::endl;
+                    std::cout << "left key pressed" << std::endl;
                     //circle.move(0, move_change_magnitude);
                 }
                 else if (event.key.code == sf::Keyboard::Up)
                 {
-                    std::cout << "right key" << std::endl;
+                    std::cout << "right key pressed" << std::endl;
                     //circle.move(0, -move_change_magnitude);
                 }
                 else if (event.key.code == sf::Keyboard::A)
                 {
-                    std::cout << "A current count side:" << ++circle_sides_count << std::endl;
+                    std::cout << "A key pressed" << std::endl;
                     //circle.setPointCount(circle_sides_count);
                 }
                 else if (event.key.code == sf::Keyboard::B)
                 {
-                    std::cout << "B current count side:" << --circle_sides_count << std::endl;
+                    std::cout << "B key pressed" << std::endl;
                     //circle.setPointCount(circle_sides_count);
+                }
+                break;
+
+            case sf::Event::KeyReleased:
+                if (event.key.code == sf::Keyboard::Left)
+                {
+                    std::cout << "left key released" << std::endl;
+                }
+                else if (event.key.code == sf::Keyboard::Right)
+                {
+                    std::cout << "right key released" << std::endl;
+                }
+                else if (event.key.code == sf::Keyboard::Up)
+                {
+                    std::cout << "up key released" << std::endl;
+                }
+                else if (event.key.code == sf::Keyboard::Down)
+                {
+                    std::cout << "down key released" << std::endl;
+                }
+                else if (event.key.code == sf::Keyboard::A)
+                {
+                    std::cout << "A key released" << std::endl;
+                }
+                else if (event.key.code == sf::Keyboard::B)
+                {
+                    std::cout << "B key released" << std::endl;
                 }
                 break;
             }
@@ -96,7 +141,9 @@ int main()
         // clear the window with black color
         window.clear(sf::Color(255, 200, 255, 255));
 
-        Akarin::RenderAndUpdate(window);
+        // Rendering here
+        Akarin::RenderAndUpdate(&window, user_input);
+
         // end the current frame
         window.display();
     }

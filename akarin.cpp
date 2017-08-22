@@ -1,25 +1,17 @@
-#include "akarin.h"
+#include "akarin.hpp"
 
-#include <SFML/Graphics.hpp>
-#include <stdio.h>
-#include <iostream>
-
-#define _USE_MATH_DEFINES // for C++  
-#include <cmath>
-/*
-Our first try at rendering something to the display. This should get called at each instance of windowHandle
-*/
 namespace Akarin {
-static void RenderAndUpdate(sf::RenderWindow window)
-{
+void RenderAndUpdate(
+    sf::RenderWindow *window,
+    GameInput game_input
+) {
 	int move_change_magnitude = 1;
+
+	int height = 800;
+	int width = 600;
 
 	int radius = 40;
 	int circle_sides_count = 20;
-
-	sf::RenderWindow window(sf::VideoMode(height, width), "Akarin");
-	window.setVerticalSyncEnabled(true);
-	window.setFramerateLimit(60);
 
 	// define a 120x50 rectangle
 	sf::RectangleShape rectangle(sf::Vector2f(120, 50));
@@ -37,6 +29,6 @@ static void RenderAndUpdate(sf::RenderWindow window)
 	// change the number of sides (points) to 100
 	circle.setPointCount(circle_sides_count);
 
-	window.draw(circle);
+	window->draw(circle);
 };
 }

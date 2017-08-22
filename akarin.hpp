@@ -1,4 +1,7 @@
 #if !defined(AKARIN_H)
+
+#include <SFML/Graphics.hpp>
+
 /*
 The structure of buffer that will be displayed to our screen
 */
@@ -8,17 +11,23 @@ The structure of buffer that will be displayed to our screen
 #define Gigabytes(value) Megabytes(value * 1024)
 
 namespace Akarin {
+struct Key {
+	bool is_down;
+	bool was_released;
+};
 struct GameInput
 {
-	bool up;
-	bool down;
-	bool left;
-	bool right;
-	bool space;
+	Key up;
+	Key down;
+	Key left;
+	Key right;
+	Key space;
+	Key a;
+	Key b;
 };
 
-static void RenderAndUpdateGame(
-    sf::RenderWindow window,
+void RenderAndUpdate(
+    sf::RenderWindow *window,
     GameInput game_input
 );
 }

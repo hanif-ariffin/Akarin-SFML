@@ -1,3 +1,22 @@
 #!/bin/bash
-echo "begin compiling"
-g++ -c main.cpp && g++ main.o -o build/sfml-app -lsfml-graphics -lsfml-window -lsfml-system
+echo "begin compilation"
+echo "object files will be created inside obj folder"
+if [ ! -d obj ]; then
+	echo "obj folder not found, creating obj folder"
+	mkdir obj
+else
+	echo "obj folder found, cleaning obj folder"
+	rm -rf obj/*
+fi
+g++ -c main.cpp -o obj/main.o
+g++ -c akarin.cpp -o obj/akarin.o
+if [ ! -d build ]; then
+	echo "build folder not found, creating build folder"
+	mkdir build
+else
+	echo "build folder found, cleaning build folder"
+	rm -rf build/*
+fi
+g++ obj/main.o obj/akarin.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
+echo "removing obj file"
+rm -rf obj
