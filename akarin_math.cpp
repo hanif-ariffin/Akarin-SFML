@@ -1,5 +1,7 @@
 #include <stdlib.h>
 
+
+namespace AkarinMath {
 int rand_with_negative(int range)
 {
 	unsigned int rand_value = 2 * (rand() % range);
@@ -23,3 +25,12 @@ int rand_with_negative_2(const int range)
 	int abs_range = abs(range);
 	return 2 * (rand() % abs_range) - abs_range;
 }
+
+int rand_with_negative_3(const int range)
+{
+	int abs_range = abs(range);
+	return 1 * (rand() % abs_range);
+
+}
+
+} // namespace AkarinMath

@@ -1,7 +1,6 @@
-#if !defined(AKARIN_H)
-
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
+
 #include "akarin_math.hpp"
 /*
 The structure of buffer that will be displayed to our screen
@@ -36,6 +35,3 @@ void RenderAndUpdate(
     UserInput user_input
 );
 } // namespace Akarin
-
-#define AKARIN_H
-#endif

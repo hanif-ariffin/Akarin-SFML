@@ -1,6 +1,9 @@
-#include "akarin.hpp"
+#include <SFML/Graphics.hpp>
 #include <stdlib.h>
 #include <iostream>
+
+#include "akarin.hpp"
+#include "akarin_math.hpp"
 
 namespace Akarin {
 
@@ -92,12 +95,12 @@ void createCircle()
 
 	int circle_x_origin = (rand() % akarin_width) - radius;
 	int circle_y_origin = (rand() % akarin_height) - radius;
-	
+
 	circle.setPosition(
 	    circle_x_origin,
 	    circle_y_origin
 	);
-	
+
 	circle.setPointCount(circle_sides_count);
 	circle.setFillColor(sf::Color(
 	                        rand() % 256,
@@ -151,7 +154,7 @@ void RenderAndUpdate(
 			circle_array.at(circle_array_iterator).move(5, 0);
 		}
 
-		circle_array.at(circle_array_iterator).move(rand(), rand());
+		circle_array.at(circle_array_iterator).move(AkarinMath::rand_with_negative_2(10), AkarinMath::rand_with_negative_2(10));
 		window->draw(circle_array.at(circle_array_iterator));
 	}
 };
