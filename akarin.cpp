@@ -1,4 +1,5 @@
 #include "akarin.hpp"
+#include <stdlib.h>
 #include <iostream>
 
 namespace Akarin {
@@ -20,6 +21,9 @@ static int background_green_color = 0;
 static int background_blue_color = 0;
 static int background_alpha_value = 0;
 
+static std::vector<sf::CircleShape> circle_array;
+static std::vector<int> circle_x_origin_array;
+static std::vector<int> circle_y_origin_array;
 
 /*
 Note:
@@ -77,19 +81,36 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.space.is_down)
 	{
 		std::cout << "space" << std::endl;
-		radius++;
-		circle_sides_count++;
+		createCircle();
 	}
 }
 
 void createCircle()
 {
+	sf::CircleShape circle(radius);
+
+	int circle_x_origin = (rand() % akarin_width) - radius;
+	int circle_y_origin = (rand() % akarin_height) - radius;
+	circle.setPosition(
+	    circle_x_origin,
+	    circle_y_origin
+	);
+	circle.setPointCount(circle_sides_count);
+	circle.setFillColor(sf::Color(
+	                    rand() % 256,
+	                    rand() % 256,
+	                    rand() % 256,
+	                    rand() % 256
+	                ));
+
+	circle_array.push_back(circle);
 };
 
 void RenderAndUpdate(
     sf::RenderWindow *window,
     UserInput user_input
 ) {
+	//std::cout << "random:" << (rand() % akarin_height) << ", " << (rand() % akarin_width) << std::endl;
 	// Set background color
 	window->clear(sf::Color(
 	                  background_red_color,
@@ -99,18 +120,10 @@ void RenderAndUpdate(
 	              ));
 	ParseUserInput(user_input);
 
-	sf::CircleShape circle(radius);
-
-	int circle_x_origin = (akarin_width / 2) + circle_x_origin_change - (radius);
-	int circle_y_origin = (akarin_height / 2) + circle_y_origin_change - (radius);
-
-	circle.setPosition(
-	    circle_x_origin,
-	    circle_y_origin
-	);
-	circle.setPointCount(circle_sides_count);
-
 	//draw the circle
-	window->draw(circle);
+	for (int circle_array_iterator = 0; circle_array_iterator < circle_array.size(); circle_array_iterator++)
+	{
+		window->draw(circle_array.at(circle_array_iterator));
+	}
 };
 }
