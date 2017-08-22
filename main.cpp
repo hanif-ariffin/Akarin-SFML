@@ -5,14 +5,14 @@
 
 int main()
 {
-    int height = 500;
-    int width = 500;
+    int height = 900;
+    int width = 1800;
 
     /*
     create the window
     you can only declare one of these
     */
-    sf::RenderWindow window(sf::VideoMode(height, width), "Akarin");
+    sf::RenderWindow window(sf::VideoMode(width, height), "Akarin");
     window.setVerticalSyncEnabled(true);
     window.setFramerateLimit(60);
 

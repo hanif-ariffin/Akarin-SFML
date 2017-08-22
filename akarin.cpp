@@ -8,8 +8,8 @@ static bool initialized = false;
 
 static int move_change_magnitude = 1;
 
-static int akarin_height = 500;
-static int akarin_width = 500;
+static int akarin_height = 900;
+static int akarin_width = 1800;
 
 static int radius = 40;
 static int circle_sides_count = 20;
@@ -123,6 +123,23 @@ void RenderAndUpdate(
 	//draw the circle
 	for (int circle_array_iterator = 0; circle_array_iterator < circle_array.size(); circle_array_iterator++)
 	{
+		if (user_input.up.is_down)
+		{
+			circle_array.at(circle_array_iterator).move(0, -5);
+		}
+		if (user_input.down.is_down)
+		{
+			circle_array.at(circle_array_iterator).move(0, 5);
+		}
+		if (user_input.left.is_down)
+		{
+			circle_array.at(circle_array_iterator).move(-5, 0);
+		}
+		if (user_input.right.is_down)
+		{
+			circle_array.at(circle_array_iterator).move(5, 0);
+		}
+
 		circle_array.at(circle_array_iterator).move((rand() % 3) - 1, (rand() % 3) - 1);
 		window->draw(circle_array.at(circle_array_iterator));
 	}
