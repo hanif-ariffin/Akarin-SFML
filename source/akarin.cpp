@@ -14,6 +14,7 @@ namespace Akarin
 {
 
 static bool initialized = false;
+static std::chrono::time_point<std::chrono::system_clock> game_current_time;
 
 static int move_change_magnitude = 1;
 
@@ -24,9 +25,12 @@ static int radius = 40;
 static int circle_sides_count = 20;
 static int circle_x_origin_change = 0;
 static int circle_y_origin_change = 0;
+static std::chrono::time_point<std::chrono::system_clock> time_jump_start;
 
 static int character_x_origin = 0;
 static int character_y_origin = 0;
+static bool ask_jump = false;
+static bool is_jumping = false;
 
 static int background_red_color = 255;
 static int background_green_color = 200;
@@ -41,7 +45,7 @@ static std::vector<int> circle_y_origin_array;
 static int statistics_negative_number_counter = 0;
 static int statistics_zero_counter = 0;
 
-static std::chrono::time_point<std::chrono::system_clock> debugging_time_start, debugging_time_end;
+static std::chrono::time_point<std::chrono::system_clock> debugging_time_end;
 
 /*
 Note:
@@ -60,13 +64,13 @@ void ParseUserInput(UserInput user_input)
 	{
 		std::cout << "up" << std::endl;
 		circle_y_origin_change--;
-		character_y_origin--;
+		//character_y_origin--;
 	}
 	if (user_input.down.is_down)
 	{
 		std::cout << "down" << std::endl;
 		circle_y_origin_change++;
-		character_y_origin++;
+		//character_y_origin++;
 	}
 	if (user_input.right.is_down)
 	{
@@ -104,7 +108,16 @@ void ParseUserInput(UserInput user_input)
 	{
 		std::cout << "space" << std::endl;
 		createCircle();
+		if (!is_jumping)
+		{
+			ask_jump = true;
+		}
 	}
+}
+
+void checkBoundary(int requested_position_x, int requested_position_y)
+{
+
 }
 
 void createCircle()
@@ -132,11 +145,9 @@ void createCircle()
 	circle_array.push_back(circle);
 };
 
-void RenderAndUpdate(
-    sf::RenderWindow *window,
-    UserInput user_input
-) {
-	debugging_time_start = std::chrono::system_clock::now();
+void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
+{
+	game_current_time = std::chrono::system_clock::now();
 	//std::cout << rand_with_negative(rand()) << ", " << rand_with_negative_2(rand()) << std::endl;
 	//std::cout << RAND_MAX << std::endl;
 	//std::cout << window->getSize().x << ", " << window->getSize().y << std::endl;
@@ -212,8 +223,43 @@ void RenderAndUpdate(
 	character.setSize(sf::Vector2f(30, 100));
 	character.setFillColor(sf::Color::Black);
 	character.setPosition(0 + character_x_origin, akarin_height - (akarin_height / 9) - 100 + character_y_origin);
-	window->draw(character);
 
+
+	if (ask_jump)
+	{
+		// since the character is not jumping at the point of request, then this is essentially entry to jumping sequence
+		if (!is_jumping)
+		{
+			// get the time when the jump was requested
+			time_jump_start = game_current_time;
+
+			// is_jumping prevents the player from requesting another jump while character is jumping
+			is_jumping = true;
+
+			std::cout << "beginning jumping sequece" << std::endl;
+		}
+		else
+		{
+
+			std::chrono::duration<double> elapsed_seconds = game_current_time - time_jump_start;
+			if (elapsed_seconds.count() > 3.0f)
+			{
+				is_jumping = false;
+				ask_jump = false;
+				std::cout << "ending jumping sequece" << std::endl;
+			} // if x < 1.5f, move up, else, move up
+			else if (elapsed_seconds.count() < 1.5f)
+			{
+				character_y_origin--;
+			}
+			else
+			{
+				character_y_origin++;
+			}
+		}
+	}
+
+	window->draw(character);
 
 	/**
 	PERFORMANCE DEBUGGING
@@ -221,7 +267,7 @@ void RenderAndUpdate(
 	-- Figure out how to print out fps, rendering time (ms), and other information
 	**/
 	debugging_time_end = std::chrono::system_clock::now();
-	std::chrono::duration<double> elapsed_seconds = debugging_time_end - debugging_time_start;
-	std::cout << elapsed_seconds.count() << std::endl;
+	std::chrono::duration<double> elapsed_seconds = debugging_time_end - game_current_time;
+	//std::cout << elapsed_seconds.count() << std::endl;
 };
 } //namespace Akarin

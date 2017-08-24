@@ -4,6 +4,10 @@
 
 namespace AkarinMath
 {
+
+/**
+Apparently rand is bad for modulus operation, people also usually seed rand() with srand(time(NULL));
+**/
 int rand_with_negative(int range)
 {
 	if (range >= RAND_MAX)
@@ -36,5 +40,14 @@ int rand_with_negative_3(const int range)
 	return 1 * (rand() % abs_range);
 
 }
+
+/**
+Absolutely no idea how this one works
+int discord_random_number_generator(const int & min, const int & max) const {
+	static std::default_random_engine re{ std::random_device{}() };
+	std::uniform_int_distribution<int> uniform_dist{ min, max };
+	return uniform_dist(re);
+}
+**/
 
 } // namespace AkarinMath
