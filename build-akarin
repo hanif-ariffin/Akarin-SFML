@@ -9,11 +9,11 @@ else
 	echo "obj folder found, cleaning obj folder"
 	rm -rf obj/*
 fi
-g++ -c source/main.cpp -o obj/main.o
-g++ -c source/akarin.cpp -o obj/akarin.o
-g++ -c source/akarin_math.cpp -o obj/akarin_math.o
-g++ -c source/akarin_map.cpp -o obj/akarin_map.o
-g++ -c source/akarin_matrix.cpp -o obj/akarin_matrix.o
+g++ -std=gnu++11 -c source/main.cpp -o obj/main.o
+g++ -std=gnu++11 -c source/akarin.cpp -o obj/akarin.o
+g++ -std=gnu++11 -c source/akarin_math.cpp -o obj/akarin_math.o
+g++ -std=gnu++11 -c source/akarin_map.cpp -o obj/akarin_map.o
+g++ -std=gnu++11 -c source/akarin_matrix.cpp -o obj/akarin_matrix.o
 if [ ! -d build ]; then
 	echo "build folder not found, creating build folder"
 	mkdir build

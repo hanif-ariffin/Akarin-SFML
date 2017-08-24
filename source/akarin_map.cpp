@@ -1,7 +1,7 @@
 #include <stdlib.h>
 #include <string>
 
-#include "akarin_atom.hpp"
+#include "../header/akarin_atom.hpp"
 
 /*
 Map class will define every object's coordinate on the map
@@ -16,10 +16,10 @@ private:
 	int width;
 public:
 	std::string map_name;
-	Map(int given_height, given_width)
+	Map(int given_height, int given_width)
 	{
 		height = given_height;
 		width = given_width;
 	}
-}
+};
 } //namespace Akarin

@@ -13,6 +13,6 @@ private:
 	std::vector<std::vector<Akarin::Atom> > map;
 public:
 	std::string map_name;
-	Map(int height, int width);
-}
+	Map(int given_height, int given_width);
+};
 } //namespace Akarin

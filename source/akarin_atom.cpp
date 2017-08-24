@@ -19,5 +19,5 @@ public:
 		shape = new sf::RectangleShape(2);
 		color = new sf::Color(red, green, blue);
 	}
-}
+};
 } //namespace Akarin

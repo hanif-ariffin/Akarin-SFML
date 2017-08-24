@@ -14,7 +14,7 @@ int main()
     */
     sf::RenderWindow window(sf::VideoMode(width, height), "Akarin");
     window.setVerticalSyncEnabled(true);
-    //window.setFramerateLimit(60);
+    window.setFramerateLimit(30);
 
     /*
     Input struct

@@ -13,7 +13,7 @@ public:
 
 	Atom(sf::RectangleShape given_shape, sf::Color given_color);
 	Atom(int red, int green, int blue);
-}
+};
 } //namespace Akarin
 
 #endif
