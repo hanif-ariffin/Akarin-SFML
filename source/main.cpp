@@ -14,7 +14,7 @@ int main()
     */
     sf::RenderWindow window(sf::VideoMode(width, height), "Akarin");
     window.setVerticalSyncEnabled(true);
-    window.setFramerateLimit(30);
+    //window.setFramerateLimit(120);
 
     /*
     Input struct
@@ -42,6 +42,7 @@ int main()
     user_input.e.was_released = false;
     user_input.r.was_released = false;
     user_input.space.was_released = false;
+
     // run the program as long as the window is open
     while (window.isOpen())
     {

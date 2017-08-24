@@ -32,11 +32,9 @@ struct UserInput
 };
 
 void ParseUserInput(UserInput user_input);
-void createCircle();
-void RenderAndUpdate(
-    sf::RenderWindow *window,
-    UserInput user_input
-);
-} // namespace 
+void createCircle(int circle_x_origin, int circle_y_origin);
+void createCircleRandomly();
+void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input);
+} // namespace
 
 #endif

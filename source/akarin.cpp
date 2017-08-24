@@ -9,37 +9,42 @@
 
 #include "../header/akarin.hpp"
 #include "../header/akarin_math.hpp"
+#include "../header/akarin_atom.hpp"
 
 namespace Akarin
 {
 
-static bool initialized = false;
+// Global Variables
 static std::chrono::time_point<std::chrono::system_clock> game_current_time;
-
-static int move_change_magnitude = 1;
-
 static int akarin_height;
 static int akarin_width;
 
+// World variables
+std::vector<std::vector<Akarin::Atom> > window_world_atom;
+
+// Variables for each circles
 static int radius = 40;
 static int circle_sides_count = 20;
 static int circle_x_origin_change = 0;
 static int circle_y_origin_change = 0;
-static std::chrono::time_point<std::chrono::system_clock> time_jump_start;
 
+// Variables for holding all the created circles
+static std::vector<sf::CircleShape> circle_array;
+static std::vector<int> circle_x_origin_array;
+static std::vector<int> circle_y_origin_array;
+
+// Variables for the character
 static int character_x_origin = 0;
 static int character_y_origin = 0;
 static bool ask_jump = false;
 static bool is_jumping = false;
+static std::chrono::time_point<std::chrono::system_clock> time_jump_start;
 
+// Variables for the background
 static int background_red_color = 255;
 static int background_green_color = 200;
 static int background_blue_color = 255;
 static int background_alpha_value = 255;
-
-static std::vector<sf::CircleShape> circle_array;
-static std::vector<int> circle_x_origin_array;
-static std::vector<int> circle_y_origin_array;
 
 ///////////////// DEBUGGING VARIABLES /////////////////////////////////////
 static int statistics_negative_number_counter = 0;
@@ -75,14 +80,16 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.right.is_down)
 	{
 		std::cout << "right" << std::endl;
-		circle_x_origin_change++;
+		circle_x_origin_change--;
 		character_x_origin++;
+		createCircle(character_x_origin + akarin_width + 20, rand() % akarin_height);
 	}
 	if (user_input.left.is_down)
 	{
 		std::cout << "left" << std::endl;
-		circle_x_origin_change--;
+		circle_x_origin_change++;
 		character_x_origin--;
+		createCircle(character_x_origin - akarin_width + 20, rand() % akarin_height);
 	}
 	if (user_input.q.is_down)
 	{
@@ -107,7 +114,6 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.space.is_down)
 	{
 		std::cout << "space" << std::endl;
-		createCircle();
 		if (!is_jumping)
 		{
 			ask_jump = true;
@@ -115,19 +121,11 @@ void ParseUserInput(UserInput user_input)
 	}
 }
 
-void checkBoundary(int requested_position_x, int requested_position_y)
-{
-
-}
-
-void createCircle()
+void createCircle(int circle_x_origin, int circle_y_origin)
 {
 	//std::cout << "creating circle" << std::endl;
 	sf::CircleShape circle;
 	circle.setRadius(10);
-
-	int circle_x_origin = (rand() % akarin_width) - radius;
-	int circle_y_origin = (rand() % akarin_height) - radius;
 
 	circle.setPosition(
 	    circle_x_origin,
@@ -144,6 +142,13 @@ void createCircle()
 
 	circle_array.push_back(circle);
 };
+
+void createCircleRandomly() {
+	int circle_x_origin = (rand() % akarin_width) - radius;
+	int circle_y_origin = (rand() % akarin_height) - radius;
+
+	return createCircle(circle_x_origin, circle_y_origin);
+}
 
 void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 {
@@ -173,19 +178,19 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	{
 		if (user_input.up.is_down)
 		{
-			circle_array.at(circle_array_iterator).move(0, -5);
+			circle_array.at(circle_array_iterator).move(0, 0);
 		}
 		if (user_input.down.is_down)
 		{
-			circle_array.at(circle_array_iterator).move(0, 5);
+			circle_array.at(circle_array_iterator).move(0, 0);
 		}
 		if (user_input.left.is_down)
 		{
-			circle_array.at(circle_array_iterator).move(-5, 0);
+			circle_array.at(circle_array_iterator).move(2, 0);
 		}
 		if (user_input.right.is_down)
 		{
-			circle_array.at(circle_array_iterator).move(5, 0);
+			circle_array.at(circle_array_iterator).move(-2, 0);
 		}
 		/**
 
