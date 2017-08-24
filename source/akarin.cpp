@@ -1,11 +1,14 @@
+// SFML libraries
 #include <SFML/Graphics.hpp>
+
 #include <stdlib.h>
 #include <iostream>
 
-#include "akarin.hpp"
-#include "akarin_math.hpp"
+#include "../header/akarin.hpp"
+#include "../header/akarin_math.hpp"
 
-namespace Akarin {
+namespace Akarin
+{
 
 static bool initialized = false;
 
@@ -27,6 +30,9 @@ static int background_alpha_value = 0;
 static std::vector<sf::CircleShape> circle_array;
 static std::vector<int> circle_x_origin_array;
 static std::vector<int> circle_y_origin_array;
+
+static int statistics_negative_number_counter = 0;
+static int statistics_zero_counter = 0;
 
 /*
 Note:
@@ -134,7 +140,9 @@ void RenderAndUpdate(
 	              ));
 	ParseUserInput(user_input);
 
-	//draw the circle
+
+	createCircle();
+	//draw the circlle
 	for (int circle_array_iterator = 0; circle_array_iterator < circle_array.size(); circle_array_iterator++)
 	{
 		if (user_input.up.is_down)
@@ -153,9 +161,28 @@ void RenderAndUpdate(
 		{
 			circle_array.at(circle_array_iterator).move(5, 0);
 		}
+		/**
 
-		circle_array.at(circle_array_iterator).move(AkarinMath::rand_with_negative_2(10), AkarinMath::rand_with_negative_2(10));
+		int move_x = AkarinMath::rand_with_negative(6);
+		int move_y = AkarinMath::rand_with_negative(5);
+
+		if (move_x < 0)
+		{
+			statistics_negative_number_counter--;
+		}
+		else if (move_x > 0)
+		{
+			statistics_negative_number_counter++;
+			std::cout << "positive!" << std::endl;
+		}
+		else
+		{
+			statistics_zero_counter++;
+		}
+		std::cout << "stats:" << statistics_negative_number_counter << ", " << statistics_zero_counter << std::endl;
+		circle_array.at(circle_array_iterator).move(move_x, move_y);
+		**/
 		window->draw(circle_array.at(circle_array_iterator));
 	}
 };
-}
+} //namespace Akarin

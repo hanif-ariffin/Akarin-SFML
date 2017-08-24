@@ -1,3 +1,6 @@
+#ifndef AKARIN
+#define AKARIN
+
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
 
@@ -34,4 +37,6 @@ void RenderAndUpdate(
     sf::RenderWindow *window,
     UserInput user_input
 );
-} // namespace Akarin
+} // namespace 
+
+#endif

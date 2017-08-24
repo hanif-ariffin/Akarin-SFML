@@ -1,6 +1,7 @@
 #!/bin/bash
 echo "begin compilation"
 echo "object files will be created inside obj folder"
+
 if [ ! -d obj ]; then
 	echo "obj folder not found, creating obj folder"
 	mkdir obj
@@ -8,9 +9,11 @@ else
 	echo "obj folder found, cleaning obj folder"
 	rm -rf obj/*
 fi
-g++ -c main.cpp -o obj/main.o
-g++ -c akarin.cpp -o obj/akarin.o
-g++ -c akarin_math.cpp -o obj/akarin_math.o
+g++ -c source/main.cpp -o obj/main.o
+g++ -c source/akarin.cpp -o obj/akarin.o
+g++ -c source/akarin_math.cpp -o obj/akarin_math.o
+g++ -c source/akarin_map.cpp -o obj/akarin_map.o
+g++ -c source/akarin_matrix.cpp -o obj/akarin_matrix.o
 if [ ! -d build ]; then
 	echo "build folder not found, creating build folder"
 	mkdir build
@@ -18,6 +21,6 @@ else
 	echo "build folder found, cleaning build folder"
 	rm -rf build/*
 fi
-g++ obj/main.o obj/akarin.o obj/akarin_math.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
-echo "removing obj file"
+g++ obj/main.o obj/akarin.o obj/akarin_math.o obj/akarin_map.o obj/akarin_matrix.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
+echo "removing obj folder"
 rm -rf obj

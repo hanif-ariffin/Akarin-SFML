@@ -1,18 +1,22 @@
 #include <stdlib.h>
+#include <iostream>
 
 
-namespace AkarinMath {
+namespace AkarinMath
+{
 int rand_with_negative(int range)
 {
-	unsigned int rand_value = 2 * (rand() % range);
-	int value;
-
-	if ((rand_value) & (1 << 31)) {
-		value = -(rand_value / 2);
-	} else {
-		value = (rand_value / 2);
+	if (range >= RAND_MAX)
+	{
+		std::cout << "AkarinMath::rand_with_negative -- requesting a range larger than RAND_MAX" << std::endl;
+		return rand_with_negative(RAND_MAX - 1);
 	}
-	return value;
+	else
+	{
+		int value = ((rand() % range) * 2) - range;
+		std::cout << value << std::endl;
+		return value;
+	}
 }
 
 int rand_with_negative(void)

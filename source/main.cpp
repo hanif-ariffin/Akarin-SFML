@@ -1,7 +1,7 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "akarin.hpp"
+#include "../header/akarin.hpp"
 
 int main()
 {
