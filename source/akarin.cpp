@@ -24,7 +24,7 @@ public:
 	Atom(int red, int green, int blue, int given_position_x, int given_position_y)
 	{
 		shape.setFillColor(sf::Color(red, green, blue));
-		shape.setSize(sf::Vector2f(100, 100));
+		shape.setSize(sf::Vector2f(5, 5));
 		position_x = given_position_x;
 		position_y = given_position_y;
 	}
@@ -79,7 +79,7 @@ static int background_green_color = 200;
 static int background_blue_color = 255;
 static int background_alpha_value = 255;
 
-///////////////// DEBUGGING VARIABLES /////////////////////////////////////
+// Variables for debugging purposes
 static int statistics_negative_number_counter = 0;
 static int statistics_zero_counter = 0;
 
@@ -98,7 +98,7 @@ for better reading and saves space, actually
 */
 void ParseUserInput(UserInput user_input)
 {
-	if (user_input.up.is_down)
+	if (user_input.up.is_down) /// UP
 	{
 		std::cout << "up" << std::endl;
 
@@ -108,7 +108,7 @@ void ParseUserInput(UserInput user_input)
 		// Background circles
 		//circle_y_origin_change--;
 	}
-	if (user_input.down.is_down)
+	if (user_input.down.is_down) // DOWN
 	{
 		std::cout << "down" << std::endl;
 
@@ -118,7 +118,7 @@ void ParseUserInput(UserInput user_input)
 		// Backgroung circles
 		//circle_y_origin_change++;
 	}
-	if (user_input.right.is_down)
+	if (user_input.right.is_down) // RIGHT
 	{
 		std::cout << "right" << std::endl;
 
@@ -129,7 +129,7 @@ void ParseUserInput(UserInput user_input)
 		// circle_x_origin_change--;
 		//createCircle(camera_x_origin + original_width + 20, rand() % original_height);
 	}
-	if (user_input.left.is_down)
+	if (user_input.left.is_down) // LEFT
 	{
 		std::cout << "left" << std::endl;
 
@@ -140,34 +140,30 @@ void ParseUserInput(UserInput user_input)
 		// circle_x_origin_change++;
 		// createCircle(camera_x_origin - original_width + 20, rand() % original_height);
 	}
-	if (user_input.q.is_down)
+	if (user_input.q.is_down) // Q
 	{
 		std::cout << "q" << std::endl;
 		background_red_color++;
 	}
-	if (user_input.w.is_down)
+	if (user_input.w.is_down) // W
 	{
 		std::cout << "w" << std::endl;
 		background_green_color++;
 	}
-	if (user_input.e.is_down)
+	if (user_input.e.is_down) // E
 	{
 		std::cout << "e" << std::endl;
 		background_blue_color++;
 	}
-	if (user_input.r.is_down)
+	if (user_input.r.is_down) // R
 	{
 		std::cout << "r" << std::endl;
 		background_alpha_value++;
 	}
-	if (user_input.space.is_down)
+	if (user_input.space.is_down) // SPACE
 	{
 		std::cout << "space" << std::endl;
-		createCircleRandomly();
-		if (!is_jumping)
-		{
-			ask_jump = true;
-		}
+		createAndRegisterAtom(camera_x_origin, -camera_y_origin);
 	}
 }
 
@@ -176,7 +172,7 @@ void createAndRegisterAtom(int position_x, int position_y)
 	world_atom.push_back(Atom(rand() % 255, rand() % 255, rand() % 255, position_x, position_y));
 };
 
-void createCircleRandomly() {
+void createRectangleRandomly() {
 	int circle_x_origin = camera_x_origin + (rand() % original_width);
 	int circle_y_origin = camera_y_origin + (rand() % original_height);
 
