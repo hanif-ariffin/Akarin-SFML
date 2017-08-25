@@ -24,7 +24,7 @@ public:
 	Atom(int red, int green, int blue, int given_position_x, int given_position_y)
 	{
 		shape.setFillColor(sf::Color(red, green, blue));
-		shape.setSize(sf::Vector2f(20, 20));
+		shape.setSize(sf::Vector2f(100, 100));
 		position_x = given_position_x;
 		position_y = given_position_y;
 	}
@@ -40,8 +40,8 @@ public:
 
 // Global Variables
 static std::chrono::time_point<std::chrono::system_clock> game_current_time;
-static int akarin_height;
-static int akarin_width;
+static int akarin_height = -1;
+static int akarin_width = -1;
 
 // World variables
 std::vector<Atom> world_atom;
@@ -60,6 +60,8 @@ static std::vector<int> circle_y_origin_array;
 // Variables for the character
 static int camera_x_origin = 0;
 static int camera_y_origin = 0;
+static int character_x_origin = 0;
+static int character_y_origin = 0;
 static bool ask_jump = false;
 static bool is_jumping = false;
 static int character_x_offset; // since we want to center character on the x axis
@@ -153,6 +155,12 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.space.is_down)
 	{
 		std::cout << "space" << std::endl;
+		createAndRegisterAtom(0, 0);
+		for (int world_atom_iterator = 0; world_atom_iterator < world_atom.size(); world_atom_iterator++)
+		{
+			std::cout << world_atom.at(world_atom_iterator).shape.getSize().x <<
+			          " ," << world_atom.at(world_atom_iterator).shape.getSize().y << std::endl;
+		}
 		if (!is_jumping)
 		{
 			ask_jump = true;
@@ -173,10 +181,10 @@ void createCircle(int position_x, int position_y)
 
 	circle.setPointCount(circle_sides_count);
 	circle.setFillColor(sf::Color(
-	                        rand() % 256,
-	                        rand() % 256,
-	                        rand() % 256,
-	                        rand() % 256
+	                        rand() % 255,
+	                        rand() % 255,
+	                        rand() % 255,
+	                        rand() % 255
 	                    ));
 
 	circle_array.push_back(circle);
@@ -197,16 +205,24 @@ void createCircleRandomly() {
 
 void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 {
+	// Obtain the current game time
 	game_current_time = std::chrono::system_clock::now();
+
 	//std::cout << rand_with_negative(rand()) << ", " << rand_with_negative_2(rand()) << std::endl;
 	//std::cout << RAND_MAX << std::endl;
 	//std::cout << window->getSize().x << ", " << window->getSize().y << std::endl;
 	//std::cout << "random:" << (rand() % akarin_height) << ", " << (rand() % akarin_width) << std::endl;
 
 	// obtain the width and height from window
-	akarin_width = window->getSize().x;
-	akarin_height = window->getSize().y;
+	if (akarin_width == -1)
+	{
+		akarin_width = window->getSize().x;
+	}
 
+	if (akarin_height == -1)
+	{
+		akarin_height = window->getSize().y;
+	}
 	// set the background color
 	window->clear(sf::Color(
 	                  background_red_color,
@@ -216,13 +232,13 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	              ));
 	ParseUserInput(user_input);
 
-	for (int world_atom_iterator = 0; world_atom_iterator < circle_array.size(); world_atom_iterator++)
+	for (int world_atom_iterator = 0; world_atom_iterator < world_atom.size(); world_atom_iterator++)
 	{
 		world_atom.at(world_atom_iterator).shape.setPosition(
-		    camera_x_origin - world_atom.at(world_atom_iterator).position_x,
-		    camera_y_origin - world_atom.at(world_atom_iterator).position_y
+		    world_atom.at(world_atom_iterator).position_x - camera_x_origin + (akarin_width / 2) - (world_atom.at(world_atom_iterator).shape.getSize().x / 2),
+		    world_atom.at(world_atom_iterator).position_y + camera_y_origin + (akarin_height / 2) - (world_atom.at(world_atom_iterator).shape.getSize().y / 2)
 		);
-		world->draw()
+		window->draw(world_atom.at(world_atom_iterator).shape);
 	}
 	/**
 		//createCircle();
@@ -268,18 +284,19 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 		}
 	**/
 	// Render the ground
+	/**
 	sf::RectangleShape ground;
 	ground.setSize(sf::Vector2f(akarin_width, (akarin_height / 9)));
 	ground.setFillColor(sf::Color::Red);
 	ground.setPosition(0, akarin_height - (akarin_height / 9));
 	window->draw(ground);
-
+	**/
+	/**
 	// Render the character
 	sf::RectangleShape character;
 	character.setSize(sf::Vector2f(30, 100));
 	character.setFillColor(sf::Color::Black);
 	character.setPosition(0 + camera_x_origin, akarin_height - (akarin_height / 9) - 100 + camera_y_origin);
-
 
 	if (ask_jump)
 	{
@@ -316,7 +333,7 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	}
 
 	window->draw(character);
-
+	**/
 	/**
 	PERFORMANCE DEBUGGING
 
