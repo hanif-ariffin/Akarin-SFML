@@ -10,11 +10,12 @@ else
 	rm -rf obj/*
 fi
 
+
 g++ -std=gnu++11 -c source/main.cpp -o obj/main.o
+echo "main.cpp ok"
+
 g++ -std=gnu++11 -c source/akarin.cpp -o obj/akarin.o
-g++ -std=gnu++11 -c source/akarin_math.cpp -o obj/akarin_math.o
-g++ -std=gnu++11 -c source/akarin_map.cpp -o obj/akarin_map.o
-g++ -std=gnu++11 -c source/akarin_matrix.cpp -o obj/akarin_matrix.o
+echo "akarin.cpp ok"
 
 if [ ! -d build ]; then
 	echo "build folder not found, creating build folder"
@@ -24,6 +25,6 @@ else
 	rm -rf build/*
 fi
 
-g++ obj/main.o obj/akarin.o obj/akarin_math.o obj/akarin_map.o obj/akarin_matrix.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
+g++ obj/main.o obj/akarin.o -o build/akarin -lsfml-graphics -lsfml-window -lsfml-system
 echo "removing obj folder"
 rm -rf obj

@@ -4,7 +4,6 @@
 #include <SFML/Graphics.hpp>
 #include <stdlib.h>
 
-#include "akarin_math.hpp"
 /*
 The structure of buffer that will be displayed to our screen
 */
@@ -34,6 +33,7 @@ struct UserInput
 void ParseUserInput(UserInput user_input);
 void createCircle(int circle_x_origin, int circle_y_origin);
 void createCircleRandomly();
+void createAndRegisterAtom(int position_x, int position_y);
 void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input);
 } // namespace
 

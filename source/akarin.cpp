@@ -9,10 +9,34 @@
 
 #include "../header/akarin.hpp"
 #include "../header/akarin_math.hpp"
-#include "../header/akarin_atom.hpp"
+//#include "../header/akarin_atom.hpp"
 
 namespace Akarin
 {
+
+class Atom
+{
+public:
+	sf::RectangleShape shape;
+	int position_x;
+	int position_y;
+
+	Atom(int red, int green, int blue, int given_position_x, int given_position_y)
+	{
+		shape.setFillColor(sf::Color(red, green, blue));
+		shape.setSize(sf::Vector2f(20, 20));
+		position_x = given_position_x;
+		position_y = given_position_y;
+	}
+
+	Atom()
+	{
+		shape.setFillColor(sf::Color(0, 0, 0));
+		shape.setSize(sf::Vector2f(100, 100));
+		position_x = 0;
+		position_y = 0;
+	}
+};
 
 // Global Variables
 static std::chrono::time_point<std::chrono::system_clock> game_current_time;
@@ -20,7 +44,7 @@ static int akarin_height;
 static int akarin_width;
 
 // World variables
-std::vector<std::vector<Akarin::Atom> > window_world_atom;
+std::vector<Atom> world_atom;
 
 // Variables for each circles
 static int radius = 40;
@@ -34,10 +58,13 @@ static std::vector<int> circle_x_origin_array;
 static std::vector<int> circle_y_origin_array;
 
 // Variables for the character
-static int character_x_origin = 0;
-static int character_y_origin = 0;
+static int camera_x_origin = 0;
+static int camera_y_origin = 0;
 static bool ask_jump = false;
 static bool is_jumping = false;
+static int character_x_offset; // since we want to center character on the x axis
+static int character_y_offset; // since we want to place character lower on the y axis
+
 static std::chrono::time_point<std::chrono::system_clock> time_jump_start;
 
 // Variables for the background
@@ -68,28 +95,40 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.up.is_down)
 	{
 		std::cout << "up" << std::endl;
+
+		camera_y_origin++;
+
+		// Background circles
 		circle_y_origin_change--;
-		//character_y_origin--;
 	}
 	if (user_input.down.is_down)
 	{
 		std::cout << "down" << std::endl;
-		circle_y_origin_change++;
-		//character_y_origin++;
+
+		camera_y_origin--;
+
+		// Backgroung circles
+		//circle_y_origin_change++;
 	}
 	if (user_input.right.is_down)
 	{
 		std::cout << "right" << std::endl;
-		circle_x_origin_change--;
-		character_x_origin++;
-		createCircle(character_x_origin + akarin_width + 20, rand() % akarin_height);
+
+		camera_x_origin++;
+
+		// Background circles
+		// circle_x_origin_change--;
+		//createCircle(camera_x_origin + akarin_width + 20, rand() % akarin_height);
 	}
 	if (user_input.left.is_down)
 	{
 		std::cout << "left" << std::endl;
-		circle_x_origin_change++;
-		character_x_origin--;
-		createCircle(character_x_origin - akarin_width + 20, rand() % akarin_height);
+
+		camera_x_origin--;
+
+		// Background circles
+		// circle_x_origin_change++;
+		// createCircle(camera_x_origin - akarin_width + 20, rand() % akarin_height);
 	}
 	if (user_input.q.is_down)
 	{
@@ -121,15 +160,15 @@ void ParseUserInput(UserInput user_input)
 	}
 }
 
-void createCircle(int circle_x_origin, int circle_y_origin)
+void createCircle(int position_x, int position_y)
 {
 	//std::cout << "creating circle" << std::endl;
 	sf::CircleShape circle;
 	circle.setRadius(10);
 
 	circle.setPosition(
-	    circle_x_origin,
-	    circle_y_origin
+	    position_x,
+	    position_y
 	);
 
 	circle.setPointCount(circle_sides_count);
@@ -141,6 +180,12 @@ void createCircle(int circle_x_origin, int circle_y_origin)
 	                    ));
 
 	circle_array.push_back(circle);
+};
+
+void createAndRegisterAtom(int position_x, int position_y)
+{
+	Atom atom = Atom(rand() % 255, rand() % 255, rand() % 255, position_x, position_y);
+	world_atom.push_back(atom);
 };
 
 void createCircleRandomly() {
@@ -171,51 +216,57 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	              ));
 	ParseUserInput(user_input);
 
-
-	//createCircle();
-	//draw the circlle
-	for (int circle_array_iterator = 0; circle_array_iterator < circle_array.size(); circle_array_iterator++)
+	for (int world_atom_iterator = 0; world_atom_iterator < circle_array.size(); world_atom_iterator++)
 	{
-		if (user_input.up.is_down)
-		{
-			circle_array.at(circle_array_iterator).move(0, 0);
-		}
-		if (user_input.down.is_down)
-		{
-			circle_array.at(circle_array_iterator).move(0, 0);
-		}
-		if (user_input.left.is_down)
-		{
-			circle_array.at(circle_array_iterator).move(2, 0);
-		}
-		if (user_input.right.is_down)
-		{
-			circle_array.at(circle_array_iterator).move(-2, 0);
-		}
-		/**
-
-		int move_x = AkarinMath::rand_with_negative(6);
-		int move_y = AkarinMath::rand_with_negative(5);
-
-		if (move_x < 0)
-		{
-			statistics_negative_number_counter--;
-		}
-		else if (move_x > 0)
-		{
-			statistics_negative_number_counter++;
-			std::cout << "positive!" << std::endl;
-		}
-		else
-		{
-			statistics_zero_counter++;
-		}
-		std::cout << "stats:" << statistics_negative_number_counter << ", " << statistics_zero_counter << std::endl;
-		circle_array.at(circle_array_iterator).move(move_x, move_y);
-		**/
-		window->draw(circle_array.at(circle_array_iterator));
+		world_atom.at(world_atom_iterator).shape.setPosition(
+		    camera_x_origin - world_atom.at(world_atom_iterator).position_x,
+		    camera_y_origin - world_atom.at(world_atom_iterator).position_y
+		);
+		world->draw()
 	}
+	/**
+		//createCircle();
+		//draw the circlle
+		for (int circle_array_iterator = 0; circle_array_iterator < circle_array.size(); circle_array_iterator++)
+		{
+			if (user_input.up.is_down)
+			{
+				circle_array.at(circle_array_iterator).move(0, 0);
+			}
+			if (user_input.down.is_down)
+			{
+				circle_array.at(circle_array_iterator).move(0, 0);
+			}
+			if (user_input.left.is_down)
+			{
+				circle_array.at(circle_array_iterator).move(2, 0);
+			}
+			if (user_input.right.is_down)
+			{
+				circle_array.at(circle_array_iterator).move(-2, 0);
+			}
 
+			int move_x = AkarinMath::rand_with_negative(6);
+			int move_y = AkarinMath::rand_with_negative(5);
+
+			if (move_x < 0)
+			{
+				statistics_negative_number_counter--;
+			}
+			else if (move_x > 0)
+			{
+				statistics_negative_number_counter++;
+				std::cout << "positive!" << std::endl;
+			}
+			else
+			{
+				statistics_zero_counter++;
+			}
+			std::cout << "stats:" << statistics_negative_number_counter << ", " << statistics_zero_counter << std::endl;
+			circle_array.at(circle_array_iterator).move(move_x, move_y);
+			window->draw(circle_array.at(circle_array_iterator));
+		}
+	**/
 	// Render the ground
 	sf::RectangleShape ground;
 	ground.setSize(sf::Vector2f(akarin_width, (akarin_height / 9)));
@@ -227,7 +278,7 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	sf::RectangleShape character;
 	character.setSize(sf::Vector2f(30, 100));
 	character.setFillColor(sf::Color::Black);
-	character.setPosition(0 + character_x_origin, akarin_height - (akarin_height / 9) - 100 + character_y_origin);
+	character.setPosition(0 + camera_x_origin, akarin_height - (akarin_height / 9) - 100 + camera_y_origin);
 
 
 	if (ask_jump)
@@ -255,11 +306,11 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 			} // if x < 1.5f, move up, else, move up
 			else if (elapsed_seconds.count() < 1.5f)
 			{
-				character_y_origin--;
+				camera_y_origin--;
 			}
 			else
 			{
-				character_y_origin++;
+				camera_y_origin++;
 			}
 		}
 	}
