@@ -40,11 +40,16 @@ public:
 
 // Global Variables
 static std::chrono::time_point<std::chrono::system_clock> game_current_time;
-static int akarin_height = -1;
-static int akarin_width = -1;
+static bool initialized = false;
+static int original_height = 0;
+static int original_width = 0;
 
 // World variables
 std::vector<Atom> world_atom;
+static int explored_map_x_right = 0;
+static int explored_map_x_left = 0;
+static int explored_map_y_up = 0;
+static int explored_map_y_down = 0;
 
 // Variables for each circles
 static int radius = 40;
@@ -60,8 +65,7 @@ static std::vector<int> circle_y_origin_array;
 // Variables for the character
 static int camera_x_origin = 0;
 static int camera_y_origin = 0;
-static int character_x_origin = 0;
-static int character_y_origin = 0;
+static int camera_speed = 10;
 static bool ask_jump = false;
 static bool is_jumping = false;
 static int character_x_offset; // since we want to center character on the x axis
@@ -98,16 +102,18 @@ void ParseUserInput(UserInput user_input)
 	{
 		std::cout << "up" << std::endl;
 
-		camera_y_origin++;
+		explored_map_y_up += camera_speed;
+		camera_y_origin += camera_speed;
 
 		// Background circles
-		circle_y_origin_change--;
+		//circle_y_origin_change--;
 	}
 	if (user_input.down.is_down)
 	{
 		std::cout << "down" << std::endl;
 
-		camera_y_origin--;
+		explored_map_y_down += camera_speed;
+		camera_y_origin -= camera_speed;
 
 		// Backgroung circles
 		//circle_y_origin_change++;
@@ -116,21 +122,23 @@ void ParseUserInput(UserInput user_input)
 	{
 		std::cout << "right" << std::endl;
 
-		camera_x_origin++;
+		explored_map_x_right += camera_speed;
+		camera_x_origin += camera_speed;
 
 		// Background circles
 		// circle_x_origin_change--;
-		//createCircle(camera_x_origin + akarin_width + 20, rand() % akarin_height);
+		//createCircle(camera_x_origin + original_width + 20, rand() % original_height);
 	}
 	if (user_input.left.is_down)
 	{
 		std::cout << "left" << std::endl;
 
-		camera_x_origin--;
+		explored_map_x_left += camera_speed;
+		camera_x_origin -= camera_speed;
 
 		// Background circles
 		// circle_x_origin_change++;
-		// createCircle(camera_x_origin - akarin_width + 20, rand() % akarin_height);
+		// createCircle(camera_x_origin - original_width + 20, rand() % original_height);
 	}
 	if (user_input.q.is_down)
 	{
@@ -155,12 +163,7 @@ void ParseUserInput(UserInput user_input)
 	if (user_input.space.is_down)
 	{
 		std::cout << "space" << std::endl;
-		createAndRegisterAtom(0, 0);
-		for (int world_atom_iterator = 0; world_atom_iterator < world_atom.size(); world_atom_iterator++)
-		{
-			std::cout << world_atom.at(world_atom_iterator).shape.getSize().x <<
-			          " ," << world_atom.at(world_atom_iterator).shape.getSize().y << std::endl;
-		}
+		createCircleRandomly();
 		if (!is_jumping)
 		{
 			ask_jump = true;
@@ -168,39 +171,16 @@ void ParseUserInput(UserInput user_input)
 	}
 }
 
-void createCircle(int position_x, int position_y)
-{
-	//std::cout << "creating circle" << std::endl;
-	sf::CircleShape circle;
-	circle.setRadius(10);
-
-	circle.setPosition(
-	    position_x,
-	    position_y
-	);
-
-	circle.setPointCount(circle_sides_count);
-	circle.setFillColor(sf::Color(
-	                        rand() % 255,
-	                        rand() % 255,
-	                        rand() % 255,
-	                        rand() % 255
-	                    ));
-
-	circle_array.push_back(circle);
-};
-
 void createAndRegisterAtom(int position_x, int position_y)
 {
-	Atom atom = Atom(rand() % 255, rand() % 255, rand() % 255, position_x, position_y);
-	world_atom.push_back(atom);
+	world_atom.push_back(Atom(rand() % 255, rand() % 255, rand() % 255, position_x, position_y));
 };
 
 void createCircleRandomly() {
-	int circle_x_origin = (rand() % akarin_width) - radius;
-	int circle_y_origin = (rand() % akarin_height) - radius;
+	int circle_x_origin = camera_x_origin + (rand() % original_width);
+	int circle_y_origin = camera_y_origin + (rand() % original_height);
 
-	return createCircle(circle_x_origin, circle_y_origin);
+	createAndRegisterAtom(circle_x_origin, circle_y_origin);
 }
 
 void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
@@ -211,35 +191,31 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	//std::cout << rand_with_negative(rand()) << ", " << rand_with_negative_2(rand()) << std::endl;
 	//std::cout << RAND_MAX << std::endl;
 	//std::cout << window->getSize().x << ", " << window->getSize().y << std::endl;
-	//std::cout << "random:" << (rand() % akarin_height) << ", " << (rand() % akarin_width) << std::endl;
+	//std::cout << "random:" << (rand() % original_height) << ", " << (rand() % original_width) << std::endl;
 
 	// obtain the width and height from window
-	if (akarin_width == -1)
+	if (!initialized)
 	{
-		akarin_width = window->getSize().x;
+		original_width = window->getSize().x;
+		original_height = window->getSize().y;
+		world_atom.push_back(Atom(0, 0, 0, 0, 0));
+
+		explored_map_x_right = original_width / 2;
+		explored_map_x_left = original_width / 2;
+		explored_map_y_up = original_height  / 2;
+		explored_map_y_down = original_height / 2;
+
+
+		initialized = true;
 	}
 
-	if (akarin_height == -1)
+	if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
 	{
-		akarin_height = window->getSize().y;
+		std::cout << "react accordingly to the change in screen size" << std::endl;
 	}
-	// set the background color
-	window->clear(sf::Color(
-	                  background_red_color,
-	                  background_green_color,
-	                  background_blue_color,
-	                  background_alpha_value
-	              ));
+
 	ParseUserInput(user_input);
 
-	for (int world_atom_iterator = 0; world_atom_iterator < world_atom.size(); world_atom_iterator++)
-	{
-		world_atom.at(world_atom_iterator).shape.setPosition(
-		    world_atom.at(world_atom_iterator).position_x - camera_x_origin + (akarin_width / 2) - (world_atom.at(world_atom_iterator).shape.getSize().x / 2),
-		    world_atom.at(world_atom_iterator).position_y + camera_y_origin + (akarin_height / 2) - (world_atom.at(world_atom_iterator).shape.getSize().y / 2)
-		);
-		window->draw(world_atom.at(world_atom_iterator).shape);
-	}
 	/**
 		//createCircle();
 		//draw the circlle
@@ -286,9 +262,9 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	// Render the ground
 	/**
 	sf::RectangleShape ground;
-	ground.setSize(sf::Vector2f(akarin_width, (akarin_height / 9)));
+	ground.setSize(sf::Vector2f(original_width, (original_height / 9)));
 	ground.setFillColor(sf::Color::Red);
-	ground.setPosition(0, akarin_height - (akarin_height / 9));
+	ground.setPosition(0, original_height - (original_height / 9));
 	window->draw(ground);
 	**/
 	/**
@@ -296,7 +272,7 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 	sf::RectangleShape character;
 	character.setSize(sf::Vector2f(30, 100));
 	character.setFillColor(sf::Color::Black);
-	character.setPosition(0 + camera_x_origin, akarin_height - (akarin_height / 9) - 100 + camera_y_origin);
+	character.setPosition(0 + camera_x_origin, original_height - (original_height / 9) - 100 + camera_y_origin);
 
 	if (ask_jump)
 	{
@@ -334,6 +310,29 @@ void RenderAndUpdate(sf::RenderWindow *window, UserInput user_input)
 
 	window->draw(character);
 	**/
+
+	/*
+	At this point we should be done with everything and just have to draw into the window
+	*/
+
+	// set the background color
+	window->clear(sf::Color(
+	                  background_red_color,
+	                  background_green_color,
+	                  background_blue_color,
+	                  background_alpha_value
+	              ));
+
+	// draw every object on the window
+	for (int world_atom_iterator = 0; world_atom_iterator < world_atom.size(); world_atom_iterator++)
+	{
+		world_atom.at(world_atom_iterator).shape.setPosition(
+		    world_atom.at(world_atom_iterator).position_x - camera_x_origin + (original_width / 2) - (world_atom.at(world_atom_iterator).shape.getSize().x / 2),
+		    world_atom.at(world_atom_iterator).position_y + camera_y_origin + (original_height / 2) - (world_atom.at(world_atom_iterator).shape.getSize().y / 2)
+		);
+		window->draw(world_atom.at(world_atom_iterator).shape);
+	}
+
 	/**
 	PERFORMANCE DEBUGGING
 

@@ -5,8 +5,8 @@
 
 int main()
 {
-    int height = 500;
-    int width = 700;
+    int height = 250;
+    int width = 1000;
 
     /*
     create the window
