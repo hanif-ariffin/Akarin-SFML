@@ -9,14 +9,6 @@
 namespace Engine
 {
 
-struct RectangleWithWeight
-{
-	sf::RectangleShape rectangle;
-	int weight;
-	int position_x;
-	int position_y;
-};
-
 // Global Variables
 static bool init = false;
 static int original_height = 0;
@@ -257,4 +249,4 @@ void RenderAndUpdate(sf::RenderWindow * window, UserInput * user_input)
 	center.setPosition((original_width / 2) - (size_x / 2), (original_height / 2) - (size_y / 2));
 	window->draw(center);
 };
-} //namespace Akarin
+} //namespace Engine
