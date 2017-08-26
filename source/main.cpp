@@ -5,7 +5,7 @@
 
 int main()
 {
-        int width = 1920 / 2;
+    int width = 1920 / 2;
     int height = 1080 / 2;
 
     /*
@@ -203,7 +203,7 @@ int main()
         //window.clear(sf::Color(0, 0, 0, 0));
 
         // Rendering here
-        Akarin::RenderAndUpdate(&window, user_input);
+        Akarin::RenderAndUpdate(&window, &user_input);
 
         // end the current frame
         window.display();

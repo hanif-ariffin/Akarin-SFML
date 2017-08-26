@@ -10,7 +10,6 @@ else
 	rm -rf obj/*
 fi
 
-
 g++ -std=gnu++11 -c source/main.cpp -o obj/main.o
 echo "main.cpp ok"
 
