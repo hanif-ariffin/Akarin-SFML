@@ -1,25 +1,25 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
 
-#include "../header/akarin.hpp"
+#include "engine.hpp"
 
 int main()
 {
-    int width = 1920 / 2;
-    int height = 1080 / 2;
+    int width = 1800 ;
+    int height = 900 ;
 
     /*
     create the window
     you can only declare one of these
     */
-    sf::RenderWindow window(sf::VideoMode(width, height), "Akarin");
+    sf::RenderWindow window(sf::VideoMode(width, height), "Engine");
     window.setVerticalSyncEnabled(true);
-    //window.setFramerateLimit(60);
+    window.setFramerateLimit(60);
 
     /*
     Input struct
     */
-    Akarin::UserInput user_input;
+    Engine::UserInput user_input;
     /*
     Reset everything to false
     */
@@ -203,7 +203,7 @@ int main()
         //window.clear(sf::Color(0, 0, 0, 0));
 
         // Rendering here
-        Akarin::RenderAndUpdate(&window, &user_input);
+        Engine::RenderAndUpdate(&window, &user_input);
 
         // end the current frame
         window.display();
