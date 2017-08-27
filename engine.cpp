@@ -16,7 +16,7 @@ static int original_width = 0;
 static int rgb_max_value = 254;
 static int rgb_min_value = 10;
 static std::vector<RectangleWithWeight> tail_array;
-static int tail_lifetime = 100;
+static int tail_lifetime = 100000000;
 static int tail_wait_counter = 0;
 
 // Variables for camera movement
@@ -25,7 +25,7 @@ static int camera_y_origin = 0;
 static int camera_speed = 10;
 static int camera_acceleration_y = 0;
 static int camera_acceleration_x = 0;
-static int camera_acceleration_max = 2;
+static int camera_acceleration_max = 1;
 
 // Variables for the background rendering
 static int background_red_color = 0;
@@ -192,7 +192,7 @@ void ParseInput(UserInput *user_input)
 	if (user_input->up.is_down || user_input->down.is_down || user_input->left.is_down || user_input->right.is_down)
 	{
 		if ((tail_wait_counter++ % 1) == 0)
-		{	AddRectaglesToTail();
+		{	
 		}
 	};
 };
@@ -206,7 +206,7 @@ void RenderAndUpdate(sf::RenderWindow * window, UserInput * user_input)
 	                  background_blue_color,
 	                  background_alpha_value
 	              ));
-
+	AddRectaglesToTail();
 	// React to change in window size
 	if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
 	{
@@ -219,6 +219,7 @@ void RenderAndUpdate(sf::RenderWindow * window, UserInput * user_input)
 	{
 		if (tail_array.at(tail_array_iterator).weight++ == tail_lifetime)
 		{
+			std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << std::endl;
 			tail_array.erase(tail_array.begin() + tail_array_iterator);
 		}
 		else
@@ -239,8 +240,9 @@ void RenderAndUpdate(sf::RenderWindow * window, UserInput * user_input)
 	int old_camera_x_origin = camera_x_origin;
 	int old_camera_y_origin = camera_y_origin;
 	ParseInput(user_input);
+#if DEBUGGIND_CAMERA_RENDERING
 	std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
-
+#endif
 	sf::RectangleShape center;
 	int size_x = 10;
 	int size_y = 10;
