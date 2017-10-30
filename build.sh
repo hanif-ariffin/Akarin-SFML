@@ -1,3 +1,5 @@
+#!/bin/bash
+
 echo "begin buiding"
 if [ ! -d "obj" ]; then
 	mkdir obj
