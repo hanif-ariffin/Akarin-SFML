@@ -14,6 +14,12 @@ The structure of buffer that will be displayed to our screen
 
 namespace Engine
 {
+	struct TimePassed
+	{
+		unsigned short seconds;
+		unsigned short milliseconds;
+	};
+
 	struct Key
 	{
 		bool is_down;
@@ -41,7 +47,7 @@ namespace Engine
 		int position_y;
 	};
 
-	void RenderAndUpdate(sf::RenderWindow *window, UserInput *user_input);
+	void RenderAndUpdate(sf::RenderWindow *window, UserInput *user_input, TimePassed* given_time_passed);
 } // namespace Engine
 
 #endif

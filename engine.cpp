@@ -19,9 +19,13 @@ namespace Engine
 	static int tail_lifetime = 100000000;
 	static int tail_wait_counter = 0;
 
-	// Variables for camera movement
-	static int camera_x_origin = 0;
-	static int camera_y_origin = 0;
+	// Variables for character
+	static int character_x_origin = 0;
+	static int character_y_origin = 0;
+
+	// Variables for camera
+	static int camera_x_origin = character_x_origin;
+	static int camera_y_origin = character_y_origin;
 	static int camera_speed = 10;
 	static int camera_acceleration_y = 0;
 	static int camera_acceleration_x = 0;
@@ -43,12 +47,18 @@ namespace Engine
 		tuple.rectangle.setSize(sf::Vector2f(8, 8));
 		tuple.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
 		tuple.weight = 0;
-		tuple.position_x = camera_x_origin;
-		tuple.position_y = camera_y_origin;
+		tuple.position_x = character_x_origin;
+		tuple.position_y = character_y_origin;
 
 		tail_array.push_back(tuple);
 
 	}
+
+	void UpdateCameraPosition() {
+		camera_x_origin = character_x_origin;
+		camera_y_origin = character_y_origin;
+	}
+
 	void ParseInput(UserInput *user_input)
 	{
 		if (user_input->up.is_down) /// UP
@@ -56,7 +66,7 @@ namespace Engine
 			if (camera_acceleration_y < camera_acceleration_max) {
 				camera_acceleration_y++;
 			}
-			camera_y_origin += camera_acceleration_y;
+			character_y_origin += camera_acceleration_y;
 
 			if (background_red_color_going_up)
 			{
@@ -80,7 +90,7 @@ namespace Engine
 			if (camera_acceleration_y != 0)
 			{
 				camera_acceleration_y--;
-				camera_y_origin += camera_acceleration_y;
+				character_y_origin += camera_acceleration_y;
 			}
 		}
 
@@ -89,7 +99,7 @@ namespace Engine
 			if (camera_acceleration_y > -camera_acceleration_max) {
 				camera_acceleration_y--;
 			}
-			camera_y_origin += camera_acceleration_y;
+			character_y_origin += camera_acceleration_y;
 
 			if (background_green_color_going_up)
 			{
@@ -113,7 +123,7 @@ namespace Engine
 			if (camera_acceleration_y != 0)
 			{
 				camera_acceleration_y++;
-				camera_y_origin += camera_acceleration_y;
+				character_y_origin += camera_acceleration_y;
 			}
 		}
 
@@ -124,7 +134,7 @@ namespace Engine
 			{
 				camera_acceleration_x--;
 			}
-			camera_x_origin += camera_acceleration_x;
+			character_x_origin += camera_acceleration_x;
 
 			if (background_alpha_value_going_up)
 			{
@@ -148,7 +158,7 @@ namespace Engine
 			if (camera_acceleration_x != 0)
 			{
 				camera_acceleration_x++;
-				camera_x_origin += camera_acceleration_x;
+				character_x_origin += camera_acceleration_x;
 			}
 		}
 
@@ -158,7 +168,7 @@ namespace Engine
 			{
 				camera_acceleration_x++;
 			}
-			camera_x_origin += camera_acceleration_x;
+			character_x_origin += camera_acceleration_x;
 
 			if (background_blue_color_going_up)
 			{
@@ -182,7 +192,7 @@ namespace Engine
 			if (camera_acceleration_x != 0)
 			{
 				camera_acceleration_x--;
-				camera_x_origin += camera_acceleration_x;
+				character_x_origin += camera_acceleration_x;
 			}
 		}
 		if (user_input->q.is_down) // RIGHT
@@ -197,16 +207,18 @@ namespace Engine
 		};
 	};
 
-	void RenderAndUpdate(sf::RenderWindow * window, UserInput * user_input)
+	void RenderAndUpdate(sf::RenderWindow* window, UserInput* user_input, TimePassed* given_time_passed)
 	{
-		// set the background color
+		// set the background color && clears it
 		window->clear(sf::Color(
 			background_red_color,
 			background_green_color,
 			background_blue_color,
 			background_alpha_value
 		));
+
 		AddRectaglesToTail();
+
 		// React to change in window size
 		if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
 		{
@@ -215,8 +227,10 @@ namespace Engine
 			std::cout << "react accordingly to the change in screen size" << std::endl;
 		}
 
+		// Render relevent objects
 		for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
 		{
+			// Additional check if the object is even within our camera's range
 			if (tail_array.at(tail_array_iterator).weight++ == tail_lifetime)
 			{
 				std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << std::endl;
@@ -237,9 +251,10 @@ namespace Engine
 				window->draw(tail_array.at(tail_array_iterator).rectangle);
 			}
 		}
-		int old_camera_x_origin = camera_x_origin;
-		int old_camera_y_origin = camera_y_origin;
+		//int old_camera_x_origin = camera_x_origin;
+		//int old_camera_y_origin = camera_y_origin;
 		ParseInput(user_input);
+		UpdateCameraPosition();
 #if DEBUGGIND_CAMERA_RENDERING
 		std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
 #endif

@@ -1,5 +1,6 @@
 #include <SFML/Graphics.hpp>
 #include <iostream>
+#include <Windows.h>
 
 #include "engine.hpp"
 
@@ -202,9 +203,35 @@ int main()
 		// clear the window with black color
 		//window.clear(sf::Color(0, 0, 0, 0));
 
-		// Rendering here
-		Engine::RenderAndUpdate(&window, &user_input);
+		/*
+		Obtain the amount of time has passed since last rendering
+		*/
+		static SYSTEMTIME systemtime_time_begin_rendering = { 0 }, systemtime_time_end_rendering = { 0 }; // pointer to the current system time
+		static Engine::TimePassed systemtime_time_between_rendering = { 0 }; //initialized to zero so the first rendation should process no physics
+		GetSystemTime(&systemtime_time_begin_rendering);
 
+		// Rendering here
+		Engine::RenderAndUpdate(&window, &user_input, &systemtime_time_between_rendering);
+
+		// Difference using SYSTEMTIME implementation
+		GetSystemTime(&systemtime_time_end_rendering);
+		systemtime_time_between_rendering.seconds = systemtime_time_end_rendering.wSecond - systemtime_time_begin_rendering.wSecond;
+		systemtime_time_between_rendering.milliseconds = systemtime_time_end_rendering.wMilliseconds - systemtime_time_begin_rendering.wMilliseconds;
+
+		/*
+		Check for anomaly ( The seconds between rendering is 1 sec)
+		then we skip this and provide akarin.cpp with (0 sec, 0 msec)).
+		*/
+		if (systemtime_time_between_rendering.seconds != 0)
+		{
+			systemtime_time_between_rendering.seconds = 0;
+			systemtime_time_between_rendering.milliseconds = 0;
+		}
+		else
+		{
+			/*Output the contents given by the win32*/
+			std::cout << systemtime_time_between_rendering.seconds << " seconds " << systemtime_time_between_rendering.milliseconds << "mseconds" << std::endl;
+		}
 		// end the current frame
 		window.display();
 	}
