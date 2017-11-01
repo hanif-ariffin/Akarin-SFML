@@ -3,33 +3,33 @@
 
 #include <stdlib.h>
 #include <iostream>
-
 #include "engine.hpp"
 
 namespace Engine
 {
 
 	// Global Variables
-	static bool init = false;
+	static bool first_render = false;
 	static int original_height = 0;
 	static int original_width = 0;
 	static int rgb_max_value = 254;
 	static int rgb_min_value = 10;
 	static std::vector<RectangleWithWeight> tail_array;
-	static int tail_lifetime = 100000000;
-	static int tail_wait_counter = 0;
+	//static int tail_lifetime = 10000;
+	//static int tail_wait_counter = 0;
 
 	// Variables for character
+	static RectangleWithWeight character;
 	static int character_x_origin = 0;
 	static int character_y_origin = 0;
 
 	// Variables for camera
 	static int camera_x_origin = character_x_origin;
 	static int camera_y_origin = character_y_origin;
-	static int camera_speed = 10;
-	static int camera_acceleration_y = 0;
-	static int camera_acceleration_x = 0;
-	static int camera_acceleration_max = 1;
+	//static int camera_speed = 10;
+	static int character_velocity_y = 0;
+	static int character_velocity_x = 0;
+	static int character_velocity_max = 50;
 
 	// Variables for the background rendering
 	static int background_red_color = 0;
@@ -43,30 +43,37 @@ namespace Engine
 
 	void AddRectaglesToTail()
 	{
-		RectangleWithWeight tuple;
-		tuple.rectangle.setSize(sf::Vector2f(8, 8));
-		tuple.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
-		tuple.weight = 0;
-		tuple.position_x = character_x_origin;
-		tuple.position_y = character_y_origin;
+		RectangleWithWeight rectangle;
+		rectangle.rectangle.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
+		rectangle.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
+		rectangle.weight = 0;
+		rectangle.position_x = character_x_origin;
+		rectangle.position_y = character_y_origin;
 
-		tail_array.push_back(tuple);
+		tail_array.push_back(rectangle);
 
 	}
 
-	void UpdateCameraPosition() {
+	void UpdateCharacterPosition()
+	{
+		character.position_x = character_x_origin;
+		character.position_y = character_y_origin;
+	};
+
+	void UpdateCameraPosition()
+	{
 		camera_x_origin = character_x_origin;
 		camera_y_origin = character_y_origin;
-	}
+	};
 
 	void ParseInput(UserInput *user_input)
 	{
 		if (user_input->up.is_down) /// UP
 		{
-			if (camera_acceleration_y < camera_acceleration_max) {
-				camera_acceleration_y++;
+			if (character_velocity_y < character_velocity_max) {
+				character_velocity_y++;
 			}
-			character_y_origin += camera_acceleration_y;
+			character_y_origin += character_velocity_y;
 
 			if (background_red_color_going_up)
 			{
@@ -87,19 +94,19 @@ namespace Engine
 		}
 		else
 		{
-			if (camera_acceleration_y != 0)
+			if (character_velocity_y > 0)
 			{
-				camera_acceleration_y--;
-				character_y_origin += camera_acceleration_y;
+				character_y_origin += character_velocity_y;
+				character_velocity_y--;
 			}
 		}
 
 		if (user_input->down.is_down) // DOWN
 		{
-			if (camera_acceleration_y > -camera_acceleration_max) {
-				camera_acceleration_y--;
+			if (character_velocity_y > -character_velocity_max) {
+				character_velocity_y--;
 			}
-			character_y_origin += camera_acceleration_y;
+			character_y_origin += character_velocity_y;
 
 			if (background_green_color_going_up)
 			{
@@ -120,21 +127,21 @@ namespace Engine
 		}
 		else
 		{
-			if (camera_acceleration_y != 0)
+			if (character_velocity_y < 0)
 			{
-				camera_acceleration_y++;
-				character_y_origin += camera_acceleration_y;
+				character_y_origin += character_velocity_y;
+				character_velocity_y++;
 			}
 		}
 
 		if (user_input->left.is_down) // LEFT
 		{
 
-			if (camera_acceleration_x > -camera_acceleration_max)
+			if (character_velocity_x > -character_velocity_max)
 			{
-				camera_acceleration_x--;
+				character_velocity_x--;
 			}
-			character_x_origin += camera_acceleration_x;
+			character_x_origin += character_velocity_x;
 
 			if (background_alpha_value_going_up)
 			{
@@ -155,20 +162,20 @@ namespace Engine
 		}
 		else
 		{
-			if (camera_acceleration_x != 0)
+			if (character_velocity_x < 0)
 			{
-				camera_acceleration_x++;
-				character_x_origin += camera_acceleration_x;
+				character_x_origin += character_velocity_x;
+				character_velocity_x++;
 			}
 		}
 
 		if (user_input->right.is_down) // RIGHT
 		{
-			if (camera_acceleration_x < camera_acceleration_max)
+			if (character_velocity_x < character_velocity_max)
 			{
-				camera_acceleration_x++;
+				character_velocity_x++;
 			}
-			character_x_origin += camera_acceleration_x;
+			character_x_origin += character_velocity_x;
 
 			if (background_blue_color_going_up)
 			{
@@ -189,10 +196,10 @@ namespace Engine
 		}
 		else
 		{
-			if (camera_acceleration_x != 0)
+			if (character_velocity_x > 0)
 			{
-				camera_acceleration_x--;
-				character_x_origin += camera_acceleration_x;
+				character_x_origin += character_velocity_x;
+				character_velocity_x--;
 			}
 		}
 		if (user_input->q.is_down) // RIGHT
@@ -201,69 +208,93 @@ namespace Engine
 		}
 		if (user_input->up.is_down || user_input->down.is_down || user_input->left.is_down || user_input->right.is_down)
 		{
-			if ((tail_wait_counter++ % 1) == 0)
-			{
-			}
 		};
 	};
 
 	void RenderAndUpdate(sf::RenderWindow* window, UserInput* user_input, TimePassed* given_time_passed)
 	{
-		// set the background color && clears it
-		window->clear(sf::Color(
-			background_red_color,
-			background_green_color,
-			background_blue_color,
-			background_alpha_value
-		));
 
-		AddRectaglesToTail();
+		if (first_render) {
+			character.rectangle.setSize(sf::Vector2f(16, 16));
+			character.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
+			character.weight = 0;
+			character.position_x = character_x_origin;
+			character.position_y = character_y_origin;
+			tail_array.push_back(character);
 
-		// React to change in window size
-		if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
-		{
-			original_width = window->getSize().x;
-			original_height = window->getSize().y;
-			std::cout << "react accordingly to the change in screen size" << std::endl;
+			first_render = false;
 		}
-
-		// Render relevent objects
-		for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
+		else
 		{
-			// Additional check if the object is even within our camera's range
-			if (tail_array.at(tail_array_iterator).weight++ == tail_lifetime)
+			// set the background color && clears it
+			window->clear(sf::Color(
+				background_red_color,
+				background_green_color,
+				background_blue_color,
+				background_alpha_value
+			));
+
+			AddRectaglesToTail();
+
+			// React to change in window size
+			if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
 			{
-				std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << std::endl;
-				tail_array.erase(tail_array.begin() + tail_array_iterator);
+				original_width = window->getSize().x;
+				original_height = window->getSize().y;
+				std::cout << "react accordingly to the change in screen size" << std::endl;
 			}
-			else
+
+			// Render relevent objects
+			for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
 			{
-				int offset_x = tail_array.at(tail_array_iterator).position_x - camera_x_origin + (original_width / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().x / 2);
-				int offset_y = camera_y_origin - tail_array.at(tail_array_iterator).position_y + (original_height / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().y / 2);
+				// Additional check if the object is even within our camera's range
+				if (tail_array.at(tail_array_iterator).rectangle.getSize().x == 0 && tail_array.at(tail_array_iterator).rectangle.getSize().y == 0)
+				{
+					//std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << std::endl;
+					tail_array.erase(tail_array.begin() + tail_array_iterator);
+				}
+				else
+				{
+					tail_array.at(tail_array_iterator).rectangle.setSize(sf::Vector2f(tail_array.at(tail_array_iterator).rectangle.getSize().x - 1, tail_array.at(tail_array_iterator).rectangle.getSize().y - 1));
+
+					int screen_offset_x = tail_array.at(tail_array_iterator).position_x - camera_x_origin + (original_width / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().x / 2);
+					int screen_offset_y = camera_y_origin - tail_array.at(tail_array_iterator).position_y + (original_height / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().y / 2);
 
 #if DEBUGGING_CAMERA_RENDERING
-				std::cout << offset_x << ", " << offset_y << " && "
-					<< original_width << " , " << original_height << " && "
-					<< tail_array.at(tail_array_iterator).position_x << ", " << camera_x_origin << " && "
-					<< tail_array.at(tail_array_iterator).position_y << ", " << camera_y_origin << std::endl;
+					std::cout << offset_x << ", " << offset_y << " && "
+						<< original_width << " , " << original_height << " && "
+						<< tail_array.at(tail_array_iterator).position_x << ", " << camera_x_origin << " && "
+						<< tail_array.at(tail_array_iterator).position_y << ", " << camera_y_origin << std::endl;
 #endif
-				tail_array.at(tail_array_iterator).rectangle.setPosition(offset_x, offset_y);
-				window->draw(tail_array.at(tail_array_iterator).rectangle);
+					tail_array.at(tail_array_iterator).rectangle.setPosition(screen_offset_x, screen_offset_y);
+					window->draw(tail_array.at(tail_array_iterator).rectangle);
+				}
 			}
-		}
-		//int old_camera_x_origin = camera_x_origin;
-		//int old_camera_y_origin = camera_y_origin;
-		ParseInput(user_input);
-		UpdateCameraPosition();
+			//int old_camera_x_origin = camera_x_origin;
+			//int old_camera_y_origin = camera_y_origin;
+			ParseInput(user_input);
+
+			// Update the camera position to follow the character
+			UpdateCameraPosition();
+
+			//Update character position
+			UpdateCharacterPosition();
+
 #if DEBUGGIND_CAMERA_RENDERING
-		std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
+			std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
 #endif
-		sf::RectangleShape center;
-		int size_x = 10;
-		int size_y = 10;
-		center.setSize(sf::Vector2f(size_x, size_y));
-		center.setFillColor(sf::Color(255, 200, 255, 255));
-		center.setPosition((original_width / 2) - (size_x / 2), (original_height / 2) - (size_y / 2));
-		window->draw(center);
+
+			/*
+			Should be removed and let character become the 'crosshair' instead
+			*/
+			sf::RectangleShape center;
+			center.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
+			center.setFillColor(sf::Color(255, 200, 255, 255));
+			center.setPosition((original_width / 2) - (character_velocity_max / 2), (original_height / 2) - (character_velocity_max / 2));
+			window->draw(center);
+
+
+			std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
+		}
 	};
 } //namespace Engine
