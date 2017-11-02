@@ -14,7 +14,7 @@ int main()
 	you can only declare one of these
 	*/
 	sf::RenderWindow window(sf::VideoMode(width, height), "Engine");
-	window.setVerticalSyncEnabled(true);
+	//window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(60);
 
 	/*

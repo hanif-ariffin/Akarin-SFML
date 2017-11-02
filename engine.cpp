@@ -29,7 +29,7 @@ namespace Engine
 	//static int camera_speed = 10;
 	static int character_velocity_y = 0;
 	static int character_velocity_x = 0;
-	static int character_velocity_max = 50;
+	static int character_velocity_max = 150;
 
 	// Variables for the background rendering
 	static int background_red_color = 0;
@@ -44,7 +44,7 @@ namespace Engine
 	void AddRectaglesToTail()
 	{
 		RectangleWithWeight rectangle;
-		rectangle.rectangle.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
+		rectangle.rectangle.setSize(sf::Vector2f(character_velocity_max/3, character_velocity_max/3));
 		rectangle.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
 		rectangle.weight = 0;
 		rectangle.position_x = character_x_origin;
@@ -213,88 +213,74 @@ namespace Engine
 
 	void RenderAndUpdate(sf::RenderWindow* window, UserInput* user_input, TimePassed* given_time_passed)
 	{
+		// set the background color && clears it
+		window->clear(sf::Color(
+			background_red_color,
+			background_green_color,
+			background_blue_color,
+			background_alpha_value
+		));
 
-		if (first_render) {
-			character.rectangle.setSize(sf::Vector2f(16, 16));
-			character.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
-			character.weight = 0;
-			character.position_x = character_x_origin;
-			character.position_y = character_y_origin;
-			tail_array.push_back(character);
+		AddRectaglesToTail();
 
-			first_render = false;
-		}
-		else
+		// React to change in window size
+		if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
 		{
-			// set the background color && clears it
-			window->clear(sf::Color(
-				background_red_color,
-				background_green_color,
-				background_blue_color,
-				background_alpha_value
-			));
+			original_width = window->getSize().x;
+			original_height = window->getSize().y;
+			std::cout << "react accordingly to the change in screen size" << std::endl;
+		}
 
-			AddRectaglesToTail();
-
-			// React to change in window size
-			if ((original_width != window->getSize().x) || (original_height != window->getSize().y))
+		// Render relevent objects
+		for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
+		{
+			// Additional check if the object is even within our camera's range
+			if (tail_array.at(tail_array_iterator).rectangle.getSize().x == 0 && tail_array.at(tail_array_iterator).rectangle.getSize().y == 0)
 			{
-				original_width = window->getSize().x;
-				original_height = window->getSize().y;
-				std::cout << "react accordingly to the change in screen size" << std::endl;
+				std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << " size:" << tail_array.size() << std::endl;
+				tail_array.erase(tail_array.begin() + tail_array_iterator);
 			}
-
-			// Render relevent objects
-			for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
+			else
 			{
-				// Additional check if the object is even within our camera's range
-				if (tail_array.at(tail_array_iterator).rectangle.getSize().x == 0 && tail_array.at(tail_array_iterator).rectangle.getSize().y == 0)
-				{
-					//std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << std::endl;
-					tail_array.erase(tail_array.begin() + tail_array_iterator);
-				}
-				else
-				{
-					tail_array.at(tail_array_iterator).rectangle.setSize(sf::Vector2f(tail_array.at(tail_array_iterator).rectangle.getSize().x - 1, tail_array.at(tail_array_iterator).rectangle.getSize().y - 1));
+				tail_array.at(tail_array_iterator).rectangle.setSize(sf::Vector2f(tail_array.at(tail_array_iterator).rectangle.getSize().x - 1, tail_array.at(tail_array_iterator).rectangle.getSize().y - 1));
 
-					int screen_offset_x = tail_array.at(tail_array_iterator).position_x - camera_x_origin + (original_width / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().x / 2);
-					int screen_offset_y = camera_y_origin - tail_array.at(tail_array_iterator).position_y + (original_height / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().y / 2);
+				int screen_offset_x = tail_array.at(tail_array_iterator).position_x - camera_x_origin + (original_width / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().x / 2);
+				int screen_offset_y = camera_y_origin - tail_array.at(tail_array_iterator).position_y + (original_height / 2) - (tail_array.at(tail_array_iterator).rectangle.getSize().y / 2);
 
 #if DEBUGGING_CAMERA_RENDERING
-					std::cout << offset_x << ", " << offset_y << " && "
-						<< original_width << " , " << original_height << " && "
-						<< tail_array.at(tail_array_iterator).position_x << ", " << camera_x_origin << " && "
-						<< tail_array.at(tail_array_iterator).position_y << ", " << camera_y_origin << std::endl;
+				std::cout << offset_x << ", " << offset_y << " && "
+					<< original_width << " , " << original_height << " && "
+					<< tail_array.at(tail_array_iterator).position_x << ", " << camera_x_origin << " && "
+					<< tail_array.at(tail_array_iterator).position_y << ", " << camera_y_origin << std::endl;
 #endif
-					tail_array.at(tail_array_iterator).rectangle.setPosition(screen_offset_x, screen_offset_y);
-					window->draw(tail_array.at(tail_array_iterator).rectangle);
-				}
+				tail_array.at(tail_array_iterator).rectangle.setPosition(screen_offset_x, screen_offset_y);
+				window->draw(tail_array.at(tail_array_iterator).rectangle);
 			}
-			//int old_camera_x_origin = camera_x_origin;
-			//int old_camera_y_origin = camera_y_origin;
-			ParseInput(user_input);
+		}
+		//int old_camera_x_origin = camera_x_origin;
+		//int old_camera_y_origin = camera_y_origin;
+		ParseInput(user_input);
 
-			// Update the camera position to follow the character
-			UpdateCameraPosition();
+		// Update the camera position to follow the character
+		UpdateCameraPosition();
 
-			//Update character position
-			UpdateCharacterPosition();
+		//Update character position
+		UpdateCharacterPosition();
 
 #if DEBUGGIND_CAMERA_RENDERING
-			std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
+		std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
 #endif
 
-			/*
-			Should be removed and let character become the 'crosshair' instead
-			*/
-			sf::RectangleShape center;
-			center.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
-			center.setFillColor(sf::Color(255, 200, 255, 255));
-			center.setPosition((original_width / 2) - (character_velocity_max / 2), (original_height / 2) - (character_velocity_max / 2));
-			window->draw(center);
+		/*
+		Should be removed and let character become the 'crosshair' instead
+		*/
+		sf::RectangleShape center;
+		center.setSize(sf::Vector2f(character_velocity_max/2, character_velocity_max/2));
+		center.setFillColor(sf::Color(255, 200, 255, 255));
+		center.setPosition((original_width / 2) - (character_velocity_max / 2), (original_height / 2) - (character_velocity_max / 2));
+		window->draw(center);
 
 
-			std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
-		}
+		std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
 	};
 } //namespace Engine
