@@ -4,10 +4,12 @@
 
 #include "engine.hpp"
 
+#define DEFAULT_ICON "akarin_pic.png"
+
 int main()
 {
-	int width = 1800;
-	int height = 900;
+	int width = 300;
+	int height = 300;
 
 	/*
 	create the window
@@ -16,6 +18,16 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(width, height), "Engine");
 	//window.setVerticalSyncEnabled(true);
 	window.setFramerateLimit(60);
+	sf::Image icon;
+	if (!icon.loadFromFile(DEFAULT_ICON))
+	{
+		std::cout << "Unable to load app icon" << std::endl;
+	}
+	else
+	{
+		std::cout << "Image successfully loaded" << std::endl;
+		window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
+	}
 
 	/*
 	Input struct
@@ -47,6 +59,12 @@ int main()
 	// run the program as long as the window is open
 	while (window.isOpen())
 	{
+		/*
+		Obtain the amount of time has passed since last rendering
+		*/
+		static SYSTEMTIME systemtime_time_begin_rendering = { 0 }, systemtime_time_end_rendering = { 0 }; // pointer to the current system time
+		static Engine::TimePassed systemtime_time_between_rendering = { 0 }; //initialized to zero so the first rendation should process no physics
+		GetSystemTime(&systemtime_time_begin_rendering);
 		// check all the window's events that were triggered since the last iteration of the loop
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -203,13 +221,6 @@ int main()
 		// clear the window with black color
 		//window.clear(sf::Color(0, 0, 0, 0));
 
-		/*
-		Obtain the amount of time has passed since last rendering
-		*/
-		static SYSTEMTIME systemtime_time_begin_rendering = { 0 }, systemtime_time_end_rendering = { 0 }; // pointer to the current system time
-		static Engine::TimePassed systemtime_time_between_rendering = { 0 }; //initialized to zero so the first rendation should process no physics
-		GetSystemTime(&systemtime_time_begin_rendering);
-
 		// Rendering here
 		Engine::RenderAndUpdate(&window, &user_input, &systemtime_time_between_rendering);
 
@@ -222,16 +233,8 @@ int main()
 		Check for anomaly ( The seconds between rendering is 1 sec)
 		then we skip this and provide akarin.cpp with (0 sec, 0 msec)).
 		*/
-		if (systemtime_time_between_rendering.seconds != 0)
-		{
-			systemtime_time_between_rendering.seconds = 0;
-			systemtime_time_between_rendering.milliseconds = 0;
-		}
-		else
-		{
-			/*Output the contents given by the win32*/
-			std::cout << systemtime_time_between_rendering.seconds << " seconds " << systemtime_time_between_rendering.milliseconds << "mseconds" << std::endl;
-		}
+		/*Output the contents given by the win32*/
+		//std::cout << systemtime_time_between_rendering.seconds << " seconds " << systemtime_time_between_rendering.milliseconds << "mseconds" << std::endl;
 		// end the current frame
 		window.display();
 	}

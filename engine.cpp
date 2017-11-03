@@ -44,7 +44,7 @@ namespace Engine
 	void AddRectaglesToTail()
 	{
 		RectangleWithWeight rectangle;
-		rectangle.rectangle.setSize(sf::Vector2f(character_velocity_max/3, character_velocity_max/3));
+		rectangle.rectangle.setSize(sf::Vector2f(character_velocity_max / 3, character_velocity_max / 3));
 		rectangle.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
 		rectangle.weight = 0;
 		rectangle.position_x = character_x_origin;
@@ -237,7 +237,7 @@ namespace Engine
 			// Additional check if the object is even within our camera's range
 			if (tail_array.at(tail_array_iterator).rectangle.getSize().x == 0 && tail_array.at(tail_array_iterator).rectangle.getSize().y == 0)
 			{
-				std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << " size:" << tail_array.size() << std::endl;
+				//std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << " size:" << tail_array.size() << std::endl;
 				tail_array.erase(tail_array.begin() + tail_array_iterator);
 			}
 			else
@@ -257,6 +257,7 @@ namespace Engine
 				window->draw(tail_array.at(tail_array_iterator).rectangle);
 			}
 		}
+
 		//int old_camera_x_origin = camera_x_origin;
 		//int old_camera_y_origin = camera_y_origin;
 		ParseInput(user_input);
@@ -275,12 +276,12 @@ namespace Engine
 		Should be removed and let character become the 'crosshair' instead
 		*/
 		sf::RectangleShape center;
-		center.setSize(sf::Vector2f(character_velocity_max/2, character_velocity_max/2));
+		center.setSize(sf::Vector2f(character_velocity_max / 2, character_velocity_max / 2));
 		center.setFillColor(sf::Color(255, 200, 255, 255));
 		center.setPosition((original_width / 2) - (character_velocity_max / 2), (original_height / 2) - (character_velocity_max / 2));
 		window->draw(center);
 
 
-		std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
+		//std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
 	};
 } //namespace Engine
