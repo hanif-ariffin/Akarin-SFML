@@ -14,34 +14,40 @@ The structure of buffer that will be displayed to our screen
 
 namespace Engine
 {
-struct Key
-{
-	bool is_down;
-	bool was_released;
-};
+	struct TimePassed
+	{
+		unsigned short seconds;
+		unsigned short milliseconds;
+	};
 
-struct UserInput
-{
-	Key up;
-	Key down;
-	Key left;
-	Key right;
-	Key space;
-	Key q;
-	Key w;
-	Key e;
-	Key r;
-};
+	struct Key
+	{
+		bool is_down;
+		bool was_released;
+	};
 
-struct RectangleWithWeight
-{
-	sf::RectangleShape rectangle;
-	int weight;
-	int position_x;
-	int position_y;
-};
+	struct UserInput
+	{
+		Key up;
+		Key down;
+		Key left;
+		Key right;
+		Key space;
+		Key q;
+		Key w;
+		Key e;
+		Key r;
+	};
 
-void RenderAndUpdate(sf::RenderWindow *window, UserInput *user_input);
+	struct RectangleWithWeight
+	{
+		sf::RectangleShape rectangle;
+		int weight;
+		int position_x;
+		int position_y;
+	};
+
+	void RenderAndUpdate(sf::RenderWindow *window, UserInput *user_input, TimePassed* given_time_passed);
 } // namespace Engine
 
 #endif

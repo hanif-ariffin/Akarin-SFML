@@ -1,4 +1,5 @@
 bin
 obj
-*test.cpp
-
+.vs/
+Debug/
+x64/
