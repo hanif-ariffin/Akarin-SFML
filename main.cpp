@@ -1,15 +1,17 @@
+#include <Windows.h>
 #include <SFML/Graphics.hpp>
 #include <iostream>
-#include <Windows.h>
+#include <math.h>
 
 #include "engine.hpp"
 
 #define DEFAULT_ICON "akarin_pic.png"
+#define MATH_CONSTANT_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 
 int main()
 {
-	int width = 1600;
-	int height = 900;
+	int width = 400;
+	int height = 400;
 
 	/*
 	create the window
@@ -236,6 +238,7 @@ int main()
 		/*Output the contents given by the win32*/
 		//std::cout << systemtime_time_between_rendering.seconds << " seconds " << systemtime_time_between_rendering.milliseconds << "mseconds" << std::endl;
 		// end the current frame
+
 		window.display();
 	}
 

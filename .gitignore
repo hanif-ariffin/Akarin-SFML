@@ -3,3 +3,5 @@ obj
 .vs/
 Debug/
 x64/
+*.dll
+*.lib
