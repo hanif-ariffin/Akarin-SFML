@@ -1,11 +1,13 @@
 #include <Windows.h>
 #include <SFML/Graphics.hpp>
+#include <SFML/Audio.hpp>
 #include <iostream>
 #include <math.h>
 
 #include "engine.hpp"
 
-#define DEFAULT_ICON "akarin_pic.png"
+#define DEFAULT_ICON "default_pic.png"
+#define DEFAULT_MUSIC "default_music.ogg"
 #define MATH_CONSTANT_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 
 int main()
@@ -58,11 +60,24 @@ int main()
 	user_input.r.was_released = false;
 	user_input.space.was_released = false;
 
+	// Load a music to play
+	sf::Music music;
+	if (!music.openFromFile(DEFAULT_MUSIC))
+	{
+		std::cout << "Unable to load music" << std::endl;
+	}
+	else
+	{
+		std::cout << "Music loaded successfully" << std::endl;
+		// Play the music
+		music.play();
+	}
+
 	// run the program as long as the window is open
 	while (window.isOpen())
 	{
 		/*
-		Obtain the amount of time has passed since last rendering
+		Obtain the amount of time has passed since last rendering`
 		*/
 		static SYSTEMTIME systemtime_time_begin_rendering = { 0 }, systemtime_time_end_rendering = { 0 }; // pointer to the current system time
 		static Engine::TimePassed systemtime_time_between_rendering = { 0 }; //initialized to zero so the first rendation should process no physics

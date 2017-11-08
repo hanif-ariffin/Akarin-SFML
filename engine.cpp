@@ -400,7 +400,7 @@ namespace Engine
 		/*
 		APPENDING STRINGS TO THE OUTPUT TEXT
 		*/
-		std::string resulting_string;
+		std::string resulting_string = "DEBUGGING INFORMATION: \n";
 		std::ostringstream ostr1, ostr2, ostr3, ostr4;
 		
 		ostr1 << given_time_passed->seconds;
@@ -454,6 +454,7 @@ namespace Engine
 		{
 			text_color_blue = 255;
 		}
+
 		text.setFillColor(sf::Color(text_color_red, text_color_green, text_color_blue));
 		// Draw it
 		window->draw(text);
