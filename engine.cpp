@@ -74,6 +74,7 @@ namespace Engine
 	AddRectanglesToTail variables
 	*/
 	static int current_rotation = 0;
+
 	void AddRectaglesToTail()
 	{
 		RectangleWithWeight rectangle_with_height;
@@ -85,6 +86,12 @@ namespace Engine
 		current_rotation %= 360;
 
 		tail_array.push_back(rectangle_with_height);
+	}
+
+
+	void RenderCircle()
+	{
+
 	}
 
 	void UpdateCharacterPosition()
@@ -110,7 +117,7 @@ namespace Engine
 
 			//background_red_color++;
 			//background_red_color %= 255;
-			
+
 			if (background_red_color_going_up)
 			{
 				background_red_color++;
@@ -222,7 +229,7 @@ namespace Engine
 			//background_blue_color++;
 			//background_blue_color %= 255;
 
-			
+
 			if (background_blue_color_going_up)
 			{
 				background_blue_color++;
@@ -402,10 +409,10 @@ namespace Engine
 		*/
 		std::string resulting_string = "DEBUGGING INFORMATION: \n";
 		std::ostringstream ostr1, ostr2, ostr3, ostr4;
-		
+
 		ostr1 << given_time_passed->seconds;
 		resulting_string += (ostr1.str() + " seconds \n");
-		
+
 		ostr2 << given_time_passed->milliseconds;
 		resulting_string += (ostr2.str() + " milliseconds \n");
 

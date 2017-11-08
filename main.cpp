@@ -1,4 +1,6 @@
+#if !LINUX BUILD
 #include <Windows.h>
+#endif
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
