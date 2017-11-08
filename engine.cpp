@@ -1,18 +1,23 @@
 // SFML libraries
 #include <SFML/Graphics.hpp>
 
+// Standard libraries
 #include <stdlib.h>
-#include <iostream>
+#include <string>
+#include <sstream>
 #include <math.h>
+
+// Our headers
 #include "engine.hpp"
+#include "debugging_tools.hpp"
 
 namespace Engine
 {
 
 	// Global Variables
 	static bool first_render = true;
-	static int first_render_original_window_width = 0;
-	static int first_render_original_window_height = 0;
+	static int first_render_original_window_width = -1;
+	static int first_render_original_window_height = -1;
 	static int rgb_max_value = 254;
 	static int rgb_min_value = 10;
 	static int scale_from_startup_x = 1;
@@ -24,6 +29,23 @@ namespace Engine
 	static sf::Sprite sprite;
 	static sf::Image image;
 
+	/*
+	Center crosshair
+	*/
+	sf::RectangleShape center_crosshair_x(sf::Vector2f(50, 10));
+	sf::RectangleShape center_crosshair_y(sf::Vector2f(10, 50));
+
+	/*
+	Default Font
+	*/
+	// Declare and load a font
+	sf::Font font;
+
+	/*
+	Debugging tools
+	*/
+	DebuggingInformation DEBUGGING_INFORMATION = {};
+
 	// Variables for character
 	static RectangleWithWeight character;
 	static int character_x_origin = 0;
@@ -33,9 +55,9 @@ namespace Engine
 	static int camera_x_origin = character_x_origin;
 	static int camera_y_origin = character_y_origin;
 	//static int camera_speed = 10;
-	static int character_velocity_y = 0;
 	static int character_velocity_x = 0;
-	static int character_velocity_max = 150;
+	static int character_velocity_y = 0;
+	static int character_velocity_max = 50;
 
 	// Variables for the background rendering
 	static int background_red_color = 0;
@@ -44,18 +66,25 @@ namespace Engine
 	static bool background_green_color_going_up = true;
 	static int background_blue_color = 0;
 	static bool background_blue_color_going_up = true;
-	static int background_alpha_value = 0;
-	static bool background_alpha_value_going_up = true;
+	static int background_alpha_color = 0;
+	static bool background_alpha_color_going_up = true;
 
+
+	/*
+	AddRectanglesToTail variables
+	*/
+	static int current_rotation = 0;
 	void AddRectaglesToTail()
 	{
-		RectangleWithWeight rectangle;
-		rectangle.rectangle.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
-		rectangle.rectangle.setFillColor(sf::Color((rand() % 155), (rand() % 155), (rand() % 155)));
-		rectangle.position_x = character_x_origin;
-		rectangle.position_y = character_y_origin;
+		RectangleWithWeight rectangle_with_height;
+		rectangle_with_height.rectangle.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
+		rectangle_with_height.rectangle.setFillColor(sf::Color((rand() % 255), (rand() % 255), (rand() % 255)));
+		rectangle_with_height.position_x = character_x_origin;
+		rectangle_with_height.position_y = character_y_origin;
+		rectangle_with_height.rectangle.rotate(current_rotation++);
+		current_rotation %= 360;
 
-		tail_array.push_back(rectangle);
+		tail_array.push_back(rectangle_with_height);
 	}
 
 	void UpdateCharacterPosition()
@@ -79,6 +108,9 @@ namespace Engine
 			}
 			character_y_origin += character_velocity_y;
 
+			//background_red_color++;
+			//background_red_color %= 255;
+			
 			if (background_red_color_going_up)
 			{
 				background_red_color++;
@@ -111,6 +143,9 @@ namespace Engine
 				character_velocity_y--;
 			}
 			character_y_origin += character_velocity_y;
+
+			//background_green_color++;
+			//background_green_color %= 255;
 
 			if (background_green_color_going_up)
 			{
@@ -147,21 +182,24 @@ namespace Engine
 			}
 			character_x_origin += character_velocity_x;
 
-			if (background_alpha_value_going_up)
+			//background_alpha_color++;
+			//background_alpha_color %= 255;
+
+			if (background_alpha_color_going_up)
 			{
-				background_alpha_value++;
+				background_alpha_color++;
 			}
 			else
 			{
-				background_alpha_value--;
+				background_alpha_color--;
 			}
-			if (background_alpha_value > rgb_max_value)
+			if (background_alpha_color > rgb_max_value)
 			{
-				background_alpha_value_going_up = false;
+				background_alpha_color_going_up = false;
 			}
-			else if (background_alpha_value < rgb_min_value)
+			else if (background_alpha_color < rgb_min_value)
 			{
-				background_alpha_value_going_up = true;
+				background_alpha_color_going_up = true;
 			}
 		}
 		else
@@ -181,6 +219,10 @@ namespace Engine
 			}
 			character_x_origin += character_velocity_x;
 
+			//background_blue_color++;
+			//background_blue_color %= 255;
+
+			
 			if (background_blue_color_going_up)
 			{
 				background_blue_color++;
@@ -231,12 +273,30 @@ namespace Engine
 				std::cout << "Image successfully loaded" << std::endl;
 			}
 
+
+			if (font.loadFromFile("courier_new.ttf"))
+			{
+				std::cout << "Unable to load font" << std::endl;
+			}
+			else
+			{
+				std::cout << "Font successfully loaded" << std::endl;
+			}
+
 			texture.loadFromImage(image);
 			// Assign it to a sprite
 			sprite.setTexture(texture);
 
 			first_render_original_window_width = window->getSize().x;
 			first_render_original_window_height = window->getSize().y;
+
+#if DEBUGGING_WITH_CROSSHAIR
+			center_crosshair_x.setFillColor(sf::Color::Green);
+			center_crosshair_y.setFillColor(sf::Color::Green);
+
+			center_crosshair_x.setPosition((window->getSize().x / 2) - (center_crosshair_x.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_x.getSize().y / 2));
+			center_crosshair_y.setPosition((window->getSize().x / 2) - (center_crosshair_y.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_y.getSize().y / 2));
+#endif
 
 			first_render = false;
 		}
@@ -246,7 +306,7 @@ namespace Engine
 			background_red_color,
 			background_green_color,
 			background_blue_color,
-			background_alpha_value
+			background_alpha_color
 		));
 
 		AddRectaglesToTail();
@@ -329,22 +389,76 @@ namespace Engine
 		//window.clear();
 		//window.draw(polygon);
 #endif
-		/*
-		Center crosshair
-		*/
-		static sf::RectangleShape center_crosshair_x(sf::Vector2f(window->getSize().x / 10, window->getSize().y / 100));
-		static sf::RectangleShape center_crosshair_y(sf::Vector2f(window->getSize().x / 100, window->getSize().y / 10));
 
-		center_crosshair_x.setFillColor(sf::Color::Green);
-		center_crosshair_y.setFillColor(sf::Color::Green);
-
-		center_crosshair_x.setPosition((window->getSize().x / 2) - (center_crosshair_x.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_x.getSize().y / 2));
-		center_crosshair_y.setPosition((window->getSize().x / 2) - (center_crosshair_y.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_y.getSize().y / 2));
-
+#if DEBUGGING_WITH_CROSSHAIR
 		window->draw(center_crosshair_x);
 		window->draw(center_crosshair_y);
+#endif
 
+		//#elseif DEBUGGIN_WITH_TEXT_INFORMATION
 
-		//std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
+		/*
+		APPENDING STRINGS TO THE OUTPUT TEXT
+		*/
+		std::string resulting_string;
+		std::ostringstream ostr1, ostr2, ostr3, ostr4;
+		
+		ostr1 << given_time_passed->seconds;
+		resulting_string += (ostr1.str() + " seconds \n");
+		
+		ostr2 << given_time_passed->milliseconds;
+		resulting_string += (ostr2.str() + " milliseconds \n");
+
+		ostr3 << character_velocity_x;
+		resulting_string += ("(" + ostr3.str() + ", ");
+
+		ostr4 << character_velocity_y;
+		resulting_string += (ostr4.str() + ") pixel/second");
+
+#if UNUSED_USING_DEBUGGING_INFORMATION_STRUCT
+		DEBUGGING_INFORMATION.program_name = "Akarin-SFML";
+		DEBUGGING_INFORMATION.render_time = "";
+		DEBUGGING_INFORMATION.render_time += given_time_passed->seconds;
+		DEBUGGING_INFORMATION.render_time += " seconds ";
+		DEBUGGING_INFORMATION.render_time += given_time_passed->milliseconds;
+		DEBUGGING_INFORMATION.render_time += " milliseconds ";
+#endif
+
+		// Create a text
+		sf::Text text(resulting_string, font);
+		text.setCharacterSize(30);
+		text.setStyle(sf::Text::Bold);
+
+		int text_color_red, text_color_green, text_color_blue;
+		if (background_red_color >= 128)
+		{
+			text_color_red = 0;
+		}
+		else
+		{
+			text_color_red = 255;
+		}
+		if (background_green_color >= 128)
+		{
+			text_color_green = 0;
+		}
+		else
+		{
+			text_color_green = 255;
+		}
+		if (background_blue_color >= 128)
+		{
+			text_color_blue = 0;
+		}
+		else
+		{
+			text_color_blue = 255;
+		}
+		text.setFillColor(sf::Color(text_color_red, text_color_green, text_color_blue));
+		// Draw it
+		window->draw(text);
+		//#endif
+
+				//std::cout << "speed x:" << character_velocity_y << " y:" << character_velocity_x << std::endl;
 	};
 } //namespace Engine

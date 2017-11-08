@@ -26,5 +26,8 @@
     <ClInclude Include="engine.hpp">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="debugging_tools.hpp">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
 </Project>

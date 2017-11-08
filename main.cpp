@@ -10,8 +10,8 @@
 
 int main()
 {
-	int width = 400;
-	int height = 400;
+	int width = 1600;
+	int height = 900;
 
 	/*
 	create the window
