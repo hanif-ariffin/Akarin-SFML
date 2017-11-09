@@ -9,6 +9,10 @@ This program is made possible by utilizing the follow libraries:
 	2. OpenAL32
 
 
+## WIN32 RELEASE
+
+The release is available in Github, check it out!
+
 
 ## LINUX MACHINE INSTALLATION
 

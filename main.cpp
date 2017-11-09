@@ -22,8 +22,9 @@ int main()
 	you can only declare one of these
 	*/
 	sf::RenderWindow window(sf::VideoMode(width, height), "Akarin (SFML)");
-	//window.setVerticalSyncEnabled(true);
-	window.setFramerateLimit(60);
+	window.setVerticalSyncEnabled(true);
+	//window.setFramerateLimit(5);
+	
 	sf::Image icon;
 	if (!icon.loadFromFile(DEFAULT_ICON))
 	{

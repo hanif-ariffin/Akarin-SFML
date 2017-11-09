@@ -271,7 +271,7 @@ namespace Engine
 		*/
 		if (first_render)
 		{
-			if (!image.loadFromFile("akarin_pic.png"))
+			if (!image.loadFromFile("default_pic.png"))
 			{
 				std::cout << "Unable to load app icon" << std::endl;
 			}
@@ -420,7 +420,7 @@ namespace Engine
 		resulting_string += ("(" + ostr3.str() + ", ");
 
 		ostr4 << character_velocity_y;
-		resulting_string += (ostr4.str() + ") pixel/second");
+		resulting_string += (ostr4.str() + ") pixels / render");
 
 #if UNUSED_USING_DEBUGGING_INFORMATION_STRUCT
 		DEBUGGING_INFORMATION.program_name = "Akarin-SFML";
