@@ -1,6 +1,9 @@
-#if WIN32_BUILD
+#if LINUX_BUILD
+//Nothing: Linux build does not require windows.h
+#else
 #include <Windows.h>
 #endif
+
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
@@ -25,7 +28,7 @@ int main()
 	sf::RenderWindow window(sf::VideoMode(width, height), "Akarin (SFML)");
 	window.setVerticalSyncEnabled(true);
 	//window.setFramerateLimit(60);
-	
+
 	sf::Image icon;
 	if (!icon.loadFromFile(DEFAULT_ICON))
 	{
@@ -83,7 +86,7 @@ int main()
 		//initialized to zero so the first rendation should process no physics
 		static Engine::TimePassed systemtime_time_between_rendering = { 0 };
 
-#if WIN32_BUILD
+#if WIN32_TIME_API
 		/*
 		Obtain the amount of time has passed since last rendering`
 		*/
@@ -251,15 +254,15 @@ int main()
 		// Rendering here
 		Engine::RenderAndUpdate(&window, &user_input, &systemtime_time_between_rendering);
 
-#if WIN32_BUILD
+#if WIN32_TIME_API
 		// Difference using SYSTEMTIME implementation
 		GetSystemTime(&systemtime_time_end_rendering);
 		systemtime_time_between_rendering.seconds = systemtime_time_end_rendering.wSecond - systemtime_time_begin_rendering.wSecond;
 		systemtime_time_between_rendering.milliseconds = systemtime_time_end_rendering.wMilliseconds - systemtime_time_begin_rendering.wMilliseconds;
 #else
 		std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-  		std::chrono::duration<int, std::milli> time_span = std::chrono::duration_cast<std::chrono::duration<int, std::milli>>(t2 - t1);
-  		//std::cout << "It took me " << time_span.count() << " milliseconds" <<std::endl;
+		std::chrono::duration<int, std::milli> time_span = std::chrono::duration_cast<std::chrono::duration<int, std::milli>>(t2 - t1);
+		//std::cout << "It took me " << time_span.count() << " milliseconds" << std::endl;
 		systemtime_time_between_rendering.milliseconds = time_span.count();
 #endif
 

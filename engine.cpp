@@ -1,5 +1,7 @@
 // SFML libraries
-#if !LINUX_BUILD
+#if LINUX_BUILD
+	//Nothing SFML is provided by the compiler
+#else
 #include <SFML/Graphics.hpp>
 #endif
 
