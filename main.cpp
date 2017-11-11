@@ -1,10 +1,11 @@
-#if !LINUX BUILD
+#if WIN32_BUILD
 #include <Windows.h>
 #endif
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>
 #include <math.h>
+#include <chrono>
 
 #include "engine.hpp"
 
@@ -23,7 +24,7 @@ int main()
 	*/
 	sf::RenderWindow window(sf::VideoMode(width, height), "Akarin (SFML)");
 	window.setVerticalSyncEnabled(true);
-	//window.setFramerateLimit(5);
+	//window.setFramerateLimit(60);
 	
 	sf::Image icon;
 	if (!icon.loadFromFile(DEFAULT_ICON))
@@ -79,12 +80,18 @@ int main()
 	// run the program as long as the window is open
 	while (window.isOpen())
 	{
+		//initialized to zero so the first rendation should process no physics
+		static Engine::TimePassed systemtime_time_between_rendering = { 0 };
+
+#if WIN32_BUILD
 		/*
 		Obtain the amount of time has passed since last rendering`
 		*/
 		static SYSTEMTIME systemtime_time_begin_rendering = { 0 }, systemtime_time_end_rendering = { 0 }; // pointer to the current system time
-		static Engine::TimePassed systemtime_time_between_rendering = { 0 }; //initialized to zero so the first rendation should process no physics
 		GetSystemTime(&systemtime_time_begin_rendering);
+#else
+		std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
+#endif
 		// check all the window's events that were triggered since the last iteration of the loop
 		sf::Event event;
 		while (window.pollEvent(event))
@@ -244,10 +251,17 @@ int main()
 		// Rendering here
 		Engine::RenderAndUpdate(&window, &user_input, &systemtime_time_between_rendering);
 
+#if WIN32_BUILD
 		// Difference using SYSTEMTIME implementation
 		GetSystemTime(&systemtime_time_end_rendering);
 		systemtime_time_between_rendering.seconds = systemtime_time_end_rendering.wSecond - systemtime_time_begin_rendering.wSecond;
 		systemtime_time_between_rendering.milliseconds = systemtime_time_end_rendering.wMilliseconds - systemtime_time_begin_rendering.wMilliseconds;
+#else
+		std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
+  		std::chrono::duration<int, std::milli> time_span = std::chrono::duration_cast<std::chrono::duration<int, std::milli>>(t2 - t1);
+  		//std::cout << "It took me " << time_span.count() << " milliseconds" <<std::endl;
+		systemtime_time_between_rendering.milliseconds = time_span.count();
+#endif
 
 		/*
 		Check for anomaly ( The seconds between rendering is 1 sec)

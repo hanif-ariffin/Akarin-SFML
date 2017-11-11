@@ -1,5 +1,7 @@
 // SFML libraries
+#if !LINUX_BUILD
 #include <SFML/Graphics.hpp>
+#endif
 
 // Standard libraries
 #include <stdlib.h>

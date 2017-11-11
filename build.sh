@@ -18,10 +18,11 @@ if ! dpkg -s libsfml-dev  > /dev/null; then
 else
 	echo "SFML is installed"
 fi
-g++ -c main.cpp -o obj/main.o
+
+g++ -c main.cpp -o obj/main.o -std=c++11
 g++ -c engine.cpp -o obj/engine.o
 
-g++ obj/main.o obj/engine.o -o bin/game -lsfml-graphics -lsfml-window -lsfml-system
+g++ obj/main.o obj/engine.o -o bin/game -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
 
 echo "clean up obj files"
 rm -rf obj
