@@ -1,9 +1,3 @@
-#if LINUX_BUILD
-//Nothing: Linux build does not require windows.h
-#else
-#include <Windows.h>
-#endif
-
 #include <SFML/Graphics.hpp>
 #include <SFML/Audio.hpp>
 #include <iostream>

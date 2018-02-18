@@ -20,9 +20,9 @@ else
 fi
 
 g++ -c main.cpp -o obj/main.o -std=c++11
-g++ -c engine.cpp -o obj/engine.o
+g++ -c engine.cpp -o obj/engine.o -std=c++11
 
-g++ obj/main.o obj/engine.o -o bin/game -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio
+g++ obj/main.o obj/engine.o -o bin/game -lsfml-graphics -lsfml-window -lsfml-system -lsfml-audio -std=c++11
 
 echo "clean up obj files"
 rm -rf obj

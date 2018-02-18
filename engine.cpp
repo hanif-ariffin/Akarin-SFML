@@ -44,11 +44,11 @@ namespace Engine
 	*/
 	// Declare and load a font
 	sf::Font font;
-
+	
 	/*
 	Debugging tools
 	*/
-	DebuggingInformation DEBUGGING_INFORMATION = {};
+	DebuggingInformation DEBUGGING_INFORMATION {};
 
 	// Variables for character
 	static RectangleWithWeight character;
@@ -466,7 +466,7 @@ namespace Engine
 			text_color_blue = 255;
 		}
 
-		text.setFillColor(sf::Color(text_color_red, text_color_green, text_color_blue));
+		//text.setFillColor(sf::Color(text_color_red, text_color_green, text_color_blue));
 		// Draw it
 		window->draw(text);
 		//#endif
