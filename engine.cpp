@@ -285,7 +285,7 @@ namespace Engine
 			}
 
 
-			if (font.loadFromFile("courier_new.ttf"))
+			if (!font.loadFromFile("courier_new.ttf"))
 			{
 				std::cout << "Unable to load font" << std::endl;
 			}
