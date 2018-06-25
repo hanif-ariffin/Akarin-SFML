@@ -39,9 +39,9 @@ namespace Engine
 		Key r;
 	};
 
-	struct RectangleWithWeight
+	struct ObjectWithWeight
 	{
-		sf::RectangleShape rectangle;
+		sf::CircleShape circle;
 		int weight;
 		int position_x;
 		int position_y;

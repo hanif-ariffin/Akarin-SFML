@@ -28,7 +28,7 @@ static int rgb_max_value = 254;
 static int rgb_min_value = 10;
 static int scale_from_startup_x = 1;
 static int scale_from_startup_y = 1;
-static std::vector<RectangleWithWeight> tail_array;
+static std::vector<ObjectWithWeight> tail_array;
 //static int tail_lifetime = 10000;
 //static int tail_wait_counter = 0;
 static sf::Texture texture;
@@ -53,7 +53,7 @@ sf::Font font;
 DebuggingInformation DEBUGGING_INFORMATION{};
 
 // Variables for character
-static RectangleWithWeight character;
+static ObjectWithWeight character;
 static int character_x_origin = 0;
 static int character_y_origin = 0;
 
@@ -82,12 +82,12 @@ static int current_rotation = 0;
 
 void AddRectaglesToTail()
 {
-	RectangleWithWeight rectangle_with_height;
-	rectangle_with_height.rectangle.setSize(sf::Vector2f(character_velocity_max, character_velocity_max));
-	rectangle_with_height.rectangle.setFillColor(sf::Color((rand() % 255), (rand() % 255), (rand() % 255)));
+	ObjectWithWeight rectangle_with_height;
+	rectangle_with_height.circle.setRadius(character_velocity_max);
+	rectangle_with_height.circle.setFillColor(sf::Color((rand() % 255), (rand() % 255), (rand() % 255)));
 	rectangle_with_height.position_x = character_x_origin;
 	rectangle_with_height.position_y = character_y_origin;
-	rectangle_with_height.rectangle.rotate(current_rotation++);
+	//rectangle_with_height.circle.rotate(current_rotation++);
 	current_rotation %= 360;
 
 	tail_array.push_back(rectangle_with_height);
@@ -98,9 +98,9 @@ void RenderGrid()
 	if ((camera_x_origin % GRID_INTERVAL) == 0)
 	{
 		std::cout << "creating horizontal grid camera_x:" << camera_x_origin << std::endl;
-		RectangleWithWeight horizontal_grid;
-		horizontal_grid.rectangle.setSize(sf::Vector2f(GRID_SIZE, first_render_original_window_height));
-		horizontal_grid.rectangle.setFillColor(sf::Color(255, 255, 255));
+		ObjectWithWeight horizontal_grid;
+		horizontal_grid.circle.setRadius(GRID_SIZE);
+		horizontal_grid.circle.setFillColor(sf::Color(255, 255, 255));
 		horizontal_grid.position_x = camera_x_origin + (first_render_original_window_width / 2);
 		horizontal_grid.position_y = camera_y_origin;
 		tail_array.push_back(horizontal_grid);
@@ -108,9 +108,9 @@ void RenderGrid()
 	if ((camera_y_origin & GRID_INTERVAL) == 0)
 	{
 		std::cout << "creating vertical grid camera_y:" << camera_x_origin << std::endl;
-		RectangleWithWeight horizontal_grid;
-		horizontal_grid.rectangle.setSize(sf::Vector2f(first_render_original_window_width, GRID_SIZE));
-		horizontal_grid.rectangle.setFillColor(sf::Color(255, 255, 255));
+		ObjectWithWeight horizontal_grid;
+		horizontal_grid.circle.setRadius(GRID_SIZE);
+		horizontal_grid.circle.setFillColor(sf::Color(255, 255, 255));
 		horizontal_grid.position_x = camera_x_origin;
 		horizontal_grid.position_y = camera_y_origin + (first_render_original_window_height / 2);
 		tail_array.push_back(horizontal_grid);
@@ -294,18 +294,17 @@ void TrailEffects(void)
 	for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
 	{
 		// Additional check if the object is even within our camera's range
-		if (tail_array.at(tail_array_iterator).rectangle.getSize().x == 0 && tail_array.at(tail_array_iterator).rectangle.getSize().y == 0)
-		{
+		if (tail_array.at(tail_array_iterator).circle.getRadius() == 0
+		){
 			//std::cout << "killed:" << tail_array.at(tail_array_iterator).position_x << " , " << tail_array.at(tail_array_iterator).position_x << " size:" << tail_array.size() << std::endl;
 			tail_array.erase(tail_array.begin() + tail_array_iterator);
 		}
 		else
 		{
 			// Temporary: Reduces the size of rectangles by (1, 1)
-			tail_array.at(tail_array_iterator).rectangle.setSize(sf::Vector2f(tail_array.at(tail_array_iterator).rectangle.getSize().x - 1, tail_array.at(tail_array_iterator).rectangle.getSize().y - 1));
-
-			int screen_offset_x = tail_array.at(tail_array_iterator).position_x + (first_render_original_window_width / 2) - camera_x_origin - (tail_array.at(tail_array_iterator).rectangle.getSize().x / 2);
-			int screen_offset_y = -tail_array.at(tail_array_iterator).position_y + (first_render_original_window_height / 2) + camera_y_origin - (tail_array.at(tail_array_iterator).rectangle.getSize().y / 2);
+			tail_array.at(tail_array_iterator).circle.setRadius(tail_array.at(tail_array_iterator).circle.getRadius()- 1);
+			int screen_offset_x = tail_array.at(tail_array_iterator).position_x + (first_render_original_window_width / 2) - camera_x_origin - (tail_array.at(tail_array_iterator).circle.getRadius() / 2);
+			int screen_offset_y = -tail_array.at(tail_array_iterator).position_y + (first_render_original_window_height / 2) + camera_y_origin - (tail_array.at(tail_array_iterator).circle.getRadius() / 2);
 
 #if DEBUGGING_CAMERA_RENDERING
 			std::cout << offset_x << ", " << offset_y << " && "
@@ -313,7 +312,7 @@ void TrailEffects(void)
 					  << tail_array.at(tail_array_iterator).position_x << ", " << camera_x_origin << " && "
 					  << tail_array.at(tail_array_iterator).position_y << ", " << camera_y_origin << std::endl;
 #endif
-			tail_array.at(tail_array_iterator).rectangle.setPosition(screen_offset_x, screen_offset_y);
+			tail_array.at(tail_array_iterator).circle.setPosition(screen_offset_x, screen_offset_y);
 		}
 	}
 };
@@ -323,7 +322,7 @@ void RenderObjects(sf::RenderWindow *window)
 	// Render relevent objects
 	for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++)
 	{
-		window->draw(tail_array.at(tail_array_iterator).rectangle);
+		window->draw(tail_array.at(tail_array_iterator).circle);
 	}
 };
 
