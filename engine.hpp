@@ -48,6 +48,6 @@ namespace Engine
 	};
 
 	void RenderAndUpdate(sf::RenderWindow *window, UserInput *user_input, TimePassed* given_time_passed);
-} // namespace Engine
+}
 
 #endif
