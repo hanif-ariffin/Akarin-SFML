@@ -43,22 +43,19 @@ int main() {
     user_input.r.was_released = false;
     user_input.space.was_released = false;
 
-  **//**
-
+  **/
     sf::Music music;
     if (!music.openFromFile(DEFAULT_MUSIC)) {
         std::cout << "Unable to load music" << std::endl;
     } else {
         std::cout << "Music loaded successfully" << std::endl;
-        // Play the music
         music.play();
-    }**/
+    }
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
     while (window.isOpen()) {
         sf::Event event;
-        while (window.pollEvent(event))
-        {
+        while (window.pollEvent(event)) {
             if (event.type == sf::Event::Closed)
                 window.close();
         }
