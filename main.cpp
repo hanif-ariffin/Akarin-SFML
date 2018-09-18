@@ -11,10 +11,8 @@
 #define MATH_CONSTANT_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 
 int main() {
-    int width = 800;
-    int height = 400;
 
-    sf::RenderWindow window(sf::VideoMode(width, height), "Akarin (SFML)");
+    sf::RenderWindow window(sf::VideoMode(400, 400), "Akarin (SFML)");
 
     sf::Image icon;
     if (!icon.loadFromFile(DEFAULT_ICON)) {
@@ -58,6 +56,12 @@ int main() {
     sf::CircleShape shape(100.f);
     shape.setFillColor(sf::Color::Green);
     while (window.isOpen()) {
+        sf::Event event;
+        while (window.pollEvent(event))
+        {
+            if (event.type == sf::Event::Closed)
+                window.close();
+        }
         window.clear();
         window.draw(shape);
         window.display();
