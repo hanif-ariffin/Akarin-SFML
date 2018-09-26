@@ -1,0 +1,3 @@
+/home/ackarin/Documents/Git/stardust/cmake-build-debug/CMakeFiles/edit_cache.dir
+/home/ackarin/Documents/Git/stardust/cmake-build-debug/CMakeFiles/rebuild_cache.dir
+/home/ackarin/Documents/Git/stardust/cmake-build-debug/CMakeFiles/stardust.dir

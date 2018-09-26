@@ -3,11 +3,10 @@
 #include <iostream>
 #include <math.h>
 #include <chrono>
+#include "../include/engine.h"
 
-//#include "engine.hpp"
-
-#define DEFAULT_ICON "default_pic.png"
-#define DEFAULT_MUSIC "default_music.ogg"
+#define DEFAULT_ICON "/home/ackarin/Documents/Git/stardust/resources/default_pic.png"
+#define DEFAULT_MUSIC "/home/ackarin/Documents/Git/stardust/resources/default_music.ogg"
 #define MATH_CONSTANT_PI 3.1415926535897932384626433832795028841971693993751058209749445923078164062
 
 int main() {
@@ -21,7 +20,7 @@ int main() {
         std::cout << "Image successfully loaded" << std::endl;
         window.setIcon(icon.getSize().x, icon.getSize().y, icon.getPixelsPtr());
     }
-    /**
+
     Engine::UserInput user_input;
     user_input.up.is_down = false;
     user_input.down.is_down = false;
@@ -42,8 +41,6 @@ int main() {
     user_input.e.was_released = false;
     user_input.r.was_released = false;
     user_input.space.was_released = false;
-
-  **/
     sf::Music music;
     if (!music.openFromFile(DEFAULT_MUSIC)) {
         std::cout << "Unable to load music" << std::endl;
@@ -51,25 +48,13 @@ int main() {
         std::cout << "Music loaded successfully" << std::endl;
         music.play();
     }
-    sf::CircleShape shape(100.f);
-    shape.setFillColor(sf::Color::Green);
+
     while (window.isOpen()) {
-        sf::Event event;
-        while (window.pollEvent(event)) {
-            if (event.type == sf::Event::Closed)
-                window.close();
-        }
-        window.clear();
-        window.draw(shape);
-        window.display();
-    }
-    /**
-    if (false) {
         Engine::TimePassed systemtime_time_between_rendering = {0, 0};
 
         std::chrono::steady_clock::time_point t1 = std::chrono::steady_clock::now();
         sf::Event event;
-        while (false && window.pollEvent(event)) {
+        while (window.pollEvent(event)) {
             switch (event.type) {
                 // "close requested" event: we close the window
                 case sf::Event::Closed:
@@ -79,8 +64,6 @@ int main() {
 
                 case sf::Event::Resized:
                     std::cout << "width: " << event.size.width << " height: " << event.size.height << std::endl;
-                    height = event.size.height;
-                    width = event.size.width;
                     break;
 
                 case sf::Event::LostFocus:
@@ -182,13 +165,12 @@ int main() {
 
         Engine::RenderAndUpdate(&window, &user_input, &systemtime_time_between_rendering);
         std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-        std::chrono::duration < int, std::milli > time_span = std::chrono::duration_cast < std::chrono::duration < int,
-                std::milli >> (t2 - t1);
+        std::chrono::duration<int, std::milli> time_span = std::chrono::duration_cast<std::chrono::duration<int,
+                std::milli >>(t2 - t1);
         systemtime_time_between_rendering.milliseconds = time_span.count();
 
         window.display();
     }
 
-    **/
     return 0;
 }

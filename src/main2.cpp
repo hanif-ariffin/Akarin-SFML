@@ -1,5 +1,5 @@
 #include <iostream>
-#include "ray.h"
+#include "../include/ray.h"
 #include <fstream>
 
 
@@ -10,7 +10,7 @@ vec3 color(const ray &r) {
     return (1.0 - t) * vec3(1.0, 1.0, 1.0) + t * vec3(0.5, 0.7, 1.0);
 }
 
-int main(void) {
+int main2(void) {
     int nx = 200;
     int ny = 100;
     std::ofstream myfile;

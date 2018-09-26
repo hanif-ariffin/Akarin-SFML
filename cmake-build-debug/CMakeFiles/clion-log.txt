@@ -1,0 +1,7 @@
+/snap/clion/39/bin/cmake/linux/bin/cmake -DCMAKE_BUILD_TYPE=Debug -G "CodeBlocks - Unix Makefiles" /home/ackarin/Documents/Git/stardust
+-- Debug
+CMAKE_CURRENT_SOURCE_DIR:/home/ackarin/Documents/Git/stardust
+-- Found SFML 2.5.0 in /usr/local/include
+-- Configuring done
+-- Generating done
+-- Build files have been written to: /home/ackarin/Documents/Git/stardust/cmake-build-debug

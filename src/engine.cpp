@@ -7,31 +7,26 @@
 
 #endif
 
-#include <iostream>
-#include <stdlib.h>
-#include <string>
 #include <sstream>
-#include <math.h>
-#include <chrono>
+#include <iostream>
 
-#include "engine.hpp"
-#include "debugging_tools.hpp"
+#include "../include/engine.h"
+#include "../include/debugging_tools.h"
+
 
 #define GRID_INTERVAL 100
 #define GRID_SIZE 5
 namespace Engine {
 
-    bool first_render = true;
     int first_render_original_window_width = -1;
     int first_render_original_window_height = -1;
     int rgb_max_value = 254;
     int rgb_min_value = 10;
-    int scale_from_startup_x = 1;
-    int scale_from_startup_y = 1;
-    std::vector <ObjectWithWeight> tail_array;
+    std::vector<ObjectWithWeight> tail_array;
     sf::Texture texture;
     sf::Sprite sprite;
     sf::Image image;
+    sf::Text text;
 
     sf::RectangleShape center_crosshair_x(sf::Vector2f(50, 10));
     sf::RectangleShape center_crosshair_y(sf::Vector2f(10, 50));
@@ -74,7 +69,6 @@ namespace Engine {
 
     void RenderGrid() {
         if ((camera_x_origin % GRID_INTERVAL) == 0) {
-            std::cout << "creating horizontal grid camera_x:" << camera_x_origin << std::endl;
             ObjectWithWeight horizontal_grid;
             horizontal_grid.circle.setRadius(GRID_SIZE);
             horizontal_grid.circle.setFillColor(sf::Color(255, 255, 255));
@@ -83,7 +77,6 @@ namespace Engine {
             tail_array.push_back(horizontal_grid);
         }
         if ((camera_y_origin & GRID_INTERVAL) == 0) {
-            std::cout << "creating vertical grid camera_y:" << camera_x_origin << std::endl;
             ObjectWithWeight horizontal_grid;
             horizontal_grid.circle.setRadius(GRID_SIZE);
             horizontal_grid.circle.setFillColor(sf::Color(255, 255, 255));
@@ -202,7 +195,6 @@ namespace Engine {
         }
         if (user_input->q.is_down) // RIGHT
         {
-            std::cout << "Q" << std::endl;
         }
         if (user_input->up.is_down || user_input->down.is_down || user_input->left.is_down ||
             user_input->right.is_down) {
@@ -211,8 +203,7 @@ namespace Engine {
 
     void TrailEffects(void) {
         for (int tail_array_iterator = 0; tail_array_iterator < tail_array.size(); tail_array_iterator++) {
-            if (tail_array.at(tail_array_iterator).circle.getRadius() == 0
-                    ) {
+            if (tail_array.at(tail_array_iterator).circle.getRadius() == 0) {
                 tail_array.erase(tail_array.begin() + tail_array_iterator);
             } else {
                 tail_array.at(tail_array_iterator).circle.setRadius(
@@ -242,62 +233,41 @@ namespace Engine {
     };
 
     void RenderAndUpdate(sf::RenderWindow *window, UserInput *user_input, TimePassed *given_time_passed) {
+        static bool first_render = true;
         if (first_render) {
-            if (!image.loadFromFile("default_pic.png")) {
-                std::cout << "Unable to load image for sprite" << std::endl;
+            first_render = false;
+            if (!texture.loadFromFile("/home/ackarin/Documents/Git/stardust/resources/default_pic.png")) {
+                std::cout << "Unable to load texture for sprite" << std::endl;
             } else {
-                std::cout << "Image for sprite successfully loaded" << std::endl;
+                std::cout << "Texture for sprite successfully loaded" << std::endl;
             }
 
-            if (!font.loadFromFile("courier_new.ttf")) {
+            if (!font.loadFromFile("/home/ackarin/Documents/Git/stardust/resources/courier_new.ttf")) {
                 std::cout << "Unable to load font for debugging" << std::endl;
             } else {
                 std::cout << "Font for debugging successfully loaded" << std::endl;
             }
-
-
-            std::chrono::steady_clock::time_point t2 = std::chrono::steady_clock::now();
-            texture.loadFromImage(image);
-            sprite.setTexture(texture);
-            window->draw(sprite);
         }
-        if (false) {
-            first_render_original_window_width = window->getSize().x;
-            first_render_original_window_height = window->getSize().y;
-
+        sprite.setTexture(texture);
+        window->draw(sprite);
 #if DEBUGGING_WITH_CROSSHAIR
-            center_crosshair_x.setFillColor(sf::Color::Green);
-            center_crosshair_y.setFillColor(sf::Color::Green);
+        center_crosshair_x.setFillColor(sf::Color::Green);
+        center_crosshair_y.setFillColor(sf::Color::Green);
 
-            center_crosshair_x.setPosition((window->getSize().x / 2) - (center_crosshair_x.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_x.getSize().y / 2));
-            center_crosshair_y.setPosition((window->getSize().x / 2) - (center_crosshair_y.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_y.getSize().y / 2));
+        center_crosshair_x.setPosition((window->getSize().x / 2) - (center_crosshair_x.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_x.getSize().y / 2));
+        center_crosshair_y.setPosition((window->getSize().x / 2) - (center_crosshair_y.getSize().x / 2), (window->getSize().y / 2) - (center_crosshair_y.getSize().y / 2));
 #endif
 
-            first_render = false;
-        }
-
-        window->
-                clear(sf::Color(
-                background_red_color,
-                background_green_color,
-                background_blue_color,
-                background_alpha_color)
+        window->clear(
+                sf::Color(
+                        background_red_color,
+                        background_green_color,
+                        background_blue_color,
+                        background_alpha_color
+                )
         );
 
         AddRectaglesToTail();
-
-        if ((first_render_original_window_height != window->
-
-                        getSize()
-
-                .x) ||
-            (first_render_original_window_width != window->
-
-                            getSize()
-
-                    .y)) {
-
-        }
 
         TrailEffects();
 
@@ -311,18 +281,8 @@ namespace Engine {
 #if DEBUGGIND_CAMERA_RENDERING
         std::cout << (camera_x_origin - old_camera_x_origin) << ", " << (camera_y_origin - old_camera_y_origin) << std::endl;
 #endif
-        sprite.
-                setPosition((first_render_original_window_height
-                             / 2) - (image.
-
-                                            getSize()
-
-                                             .x / 2),
-                            (first_render_original_window_width / 2) - (image.
-
-                                            getSize()
-
-                                                                                .y / 2));
+        sprite.setPosition((first_render_original_window_height / 2) - (image.getSize().x / 2),
+                           (first_render_original_window_width / 2) - (image.getSize().y / 2));
 
 #if DEBUGGING_TRYING_OUT_CONVEX_SHAPE
         sf::ConvexShape polygon;
@@ -350,37 +310,17 @@ namespace Engine {
         std::string resulting_string = "DEBUGGING INFORMATION: \n";
         std::ostringstream ostr1, ostr2, ostr3, ostr4;
 
-        ostr1 << given_time_passed->
-                seconds;
-        resulting_string += (ostr1.
+        ostr1 << given_time_passed->seconds;
+        resulting_string += (ostr1.str() + " seconds \n");
 
-                str()
+        ostr2 << given_time_passed->milliseconds;
+        resulting_string += (ostr2.str() + " milliseconds \n");
 
-                             + " seconds \n");
+        ostr3 << character_velocity_x;
+        resulting_string += ("(" + ostr3.str() + ", ");
 
-        ostr2 << given_time_passed->
-                milliseconds;
-        resulting_string += (ostr2.
-
-                str()
-
-                             + " milliseconds \n");
-
-        ostr3 <<
-              character_velocity_x;
-        resulting_string += ("(" + ostr3.
-
-                str()
-
-                             + ", ");
-
-        ostr4 <<
-              character_velocity_y;
-        resulting_string += (ostr4.
-
-                str()
-
-                             + ") pixels / render");
+        ostr4 << character_velocity_y;
+        resulting_string += (ostr4.str() + ") pixels / render");
 
 #if UNUSED_USING_DEBUGGING_INFORMATION_STRUCT
         DEBUGGING_INFORMATION.program_name = "Akarin-SFML";
@@ -391,10 +331,8 @@ namespace Engine {
         DEBUGGING_INFORMATION.render_time += " milliseconds ";
 #endif
 
-        sf::Text text(resulting_string, font);
         text.setCharacterSize(30);
-        text.
-                setStyle(sf::Text::Bold);
+        text.setStyle(sf::Text::Bold);
 
         int text_color_red, text_color_green, text_color_blue;
         if (background_red_color >= 128) {
@@ -414,5 +352,5 @@ namespace Engine {
         }
         window->
                 draw(text);
-    };
+    }
 }
